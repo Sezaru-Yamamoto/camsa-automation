@@ -101,8 +101,6 @@
         <label for="telefono">Teléfono:</label>
         <input type="tel" id="telefono" name="telefono" pattern="[0-9]{10}" required>
 
-        <input type="hidden" id="searchKey" name="searchKey"> <!-- Campo para SearchKey -->
-
         <label for="fecha-hora-cita">Fecha y Hora de la Cita:</label>
         <input type="datetime-local" id="fecha-hora-cita" name="fecha-hora-cita" required>
 
@@ -111,32 +109,6 @@
 
         <input type="submit" value="Registrar Cita">
     </form>
-
- <script>
-        document.getElementById('patientForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            var correo = document.getElementById('correo').value;
-            var telefono = document.getElementById('telefono').value;
-            
-            // Generar SearchKey combinando correo y teléfono
-            var searchKey = correo + " | " + telefono;
-            document.getElementById('searchKey').value = searchKey;
-
-            var formData = new FormData(this);
-            fetch(this.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        });
-    </script>
     
 </body>
 </html>
