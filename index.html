@@ -16,6 +16,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            position: relative;
         }
 
         h2 {
@@ -81,6 +82,49 @@
                 padding: 15px;
             }
         }
+
+        /* Estilos para el mensaje de confirmación */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .confirmation-box p {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            color: #34495e;
+        }
+
+        .confirmation-box button {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .confirmation-box button:hover {
+            background-color: #27ae60;
+        }
     </style>
 </head>
 <body>
@@ -92,14 +136,14 @@
         <label for="apellido">Apellido:</label>
         <input type="text" id="apellido" name="apellido" required>
 
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" id="telefono" name="telefono" pattern="[0-9]{10}" required>
+
         <label for="fecha-nacimiento">Fecha de Nacimiento:</label>
         <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
 
         <label for="correo">Correo Electrónico:</label>
         <input type="email" id="correo" name="correo" required>
-
-        <label for="telefono">Teléfono:</label>
-        <input type="tel" id="telefono" name="telefono" pattern="[0-9]{10}" required>
 
         <label for="fecha-hora-cita">Fecha y Hora de la Cita:</label>
         <input type="datetime-local" id="fecha-hora-cita" name="fecha-hora-cita" required>
@@ -109,6 +153,44 @@
 
         <input type="submit" value="Registrar Cita">
     </form>
-    
+
+    <!-- Recuadro de confirmación -->
+    <div class="overlay" id="confirmationOverlay">
+        <div class="confirmation-box">
+            <p>Cita agendada correctamente, enviaremos un mensaje con los detalles al número registrado, ¡Gracias!</p>
+            <button onclick="closeConfirmation()">Ok</button>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar el recuadro de confirmación
+        function showConfirmation() {
+            document.getElementById('confirmationOverlay').style.display = 'flex';
+        }
+
+        // Función para cerrar el recuadro de confirmación
+        function closeConfirmation() {
+            document.getElementById('confirmationOverlay').style.display = 'none';
+        }
+
+        // Interceptar el envío del formulario
+        document.getElementById('patientForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir el envío del formulario
+            var form = event.target;
+
+            // Realizar el envío del formulario de manera asíncrona (opcional)
+            fetch(form.action, {
+                method: form.method,
+                body: new FormData(form)
+            }).then(function(response) {
+                // Si el envío es exitoso, mostrar el recuadro de confirmación
+                if (response.ok) {
+                    showConfirmation();
+                }
+            }).catch(function(error) {
+                console.error('Error al enviar el formulario:', error);
+            });
+        });
+    </script>
 </body>
 </html>
