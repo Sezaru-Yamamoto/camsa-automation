@@ -128,7 +128,7 @@
     </style>
 </head>
 <body>
-    <form id="patientForm" action="https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p" method="POST">
+    <form id="patientForm">
         <h2>Registro de Paciente y Cita</h2>
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" required>
@@ -173,14 +173,47 @@
             document.getElementById('confirmationOverlay').style.display = 'none';
         }
 
+        // Validar la fecha y hora de la cita
+        document.getElementById('fecha-hora-cita').addEventListener('input', function(event) {
+            var dateTimeInput = event.target.value;
+            var selectedDate = new Date(dateTimeInput);
+
+            // Obtener día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
+            var dayOfWeek = selectedDate.getUTCDay();
+            var hours = selectedDate.getUTCHours();
+
+            // Validaciones según el día de la semana
+            var valid = true;
+            if (dayOfWeek === 0) {
+                // Domingo (no permitir)
+                valid = false;
+            } else if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                // Lunes a viernes (10:00 - 18:00)
+                if (hours < 10 || hours >= 18) {
+                    valid = false;
+                }
+            } else if (dayOfWeek === 6) {
+                // Sábado (10:00 - 16:00)
+                if (hours < 10 || hours >= 16) {
+                    valid = false;
+                }
+            }
+
+            // Si la fecha/hora seleccionada no es válida, limpiar el campo
+            if (!valid) {
+                alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
+                event.target.value = '';
+            }
+        });
+
         // Interceptar el envío del formulario
         document.getElementById('patientForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevenir el envío del formulario
             var form = event.target;
 
-            // Realizar el envío del formulario de manera asíncrona (opcional)
-            fetch(form.action, {
-                method: form.method,
+            // Realizar el envío del formulario de manera asíncrona
+            fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+                method: 'POST',
                 body: new FormData(form)
             }).then(function(response) {
                 // Si el envío es exitoso, mostrar el recuadro de confirmación
