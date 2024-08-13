@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-
         .flatpickr-calendar .day {
             border-radius: 0;
             color: black;
@@ -176,11 +175,11 @@
             <button id="confirmationButton">OK</button>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
+            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Asegúrate de usar el token correcto
             const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
             const TABLE_NAME = 'Citas';
 
@@ -196,6 +195,22 @@
                         const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
                         actualizarHorasDisponibles(fechaCita);
                     }
+                },
+                onReady: function() {
+                    obtenerFechasOcupadas().then(fechasOcupadas => {
+                        const calendar = document.querySelector('.flatpickr-calendar');
+                        const dias = calendar.querySelectorAll('.day');
+                        dias.forEach(dia => {
+                            const fechaDia = dia.getAttribute('data-date');
+                            if (fechaDia && fechasOcupadas.includes(fechaDia)) {
+                                dia.style.backgroundColor = 'red';
+                                dia.style.color = 'white';
+                            } else if (fechaDia) {
+                                dia.style.backgroundColor = 'green';
+                                dia.style.color = 'white';
+                            }
+                        });
+                    });
                 }
             });
 
@@ -213,9 +228,8 @@
                     return horasOcupadas;
                 });
             }
-            
-            // Función para obtener fechas ocupadas desde Airtable
- function obtenerFechasOcupadas() {
+
+            function obtenerFechasOcupadas() {
                 const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?view=Grid%20view`;
                 return fetch(url, {
                     headers: {
@@ -230,37 +244,6 @@
                     }).filter(Boolean);
                 });
             }
-
-            function actualizarCalendario(fechasOcupadas) {
-                const calendar = document.querySelector('.flatpickr-calendar');
-                const dias = calendar.querySelectorAll('.day');
-
-                dias.forEach(dia => {
-                    const fechaDia = dia.getAttribute('data-date');
-                    if (fechaDia && fechasOcupadas.includes(fechaDia)) {
-                        dia.style.backgroundColor = 'red';
-                        dia.style.color = 'white';
-                    } else if (fechaDia) {
-                        dia.style.backgroundColor = 'green';
-                        dia.style.color = 'white';
-                    }
-                });
-            }
-
-            flatpickr("#fecha-cita", {
-                dateFormat: "Y-m-d",
-                minDate: "today",
-                onReady: function() {
-                    obtenerFechasOcupadas().then(fechasOcupadas => {
-                        // Aquí usamos flatpickr para actualizar los estilos de los días
-                        const calendario = document.querySelector('.flatpickr-calendar');
-                        const dias = calendario.querySelectorAll('.day');
-                        actualizarCalendario(fechasOcupadas);
-                    });
-                }
-            });
-        });
-
 
             function actualizarHorasDisponibles(fechaCita) {
                 obtenerHorasOcupadas(fechaCita)
@@ -289,13 +272,6 @@
                     }
                 });
             }
-
-            document.getElementById('fecha-cita').addEventListener('change', function() {
-                const fechaCita = this.value;
-                if (fechaCita) {
-                    actualizarHorasDisponibles(fechaCita);
-                }
-            });
 
             document.getElementById('patientForm').addEventListener('submit', function(event) {
                 event.preventDefault();
