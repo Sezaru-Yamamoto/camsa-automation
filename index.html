@@ -256,7 +256,12 @@
             <input type="date" id="fecha-cita" name="fecha-cita" required>
 
             <label for="hora-cita">Hora de la Cita:</label>
+            <input type="time" id="hora-cita" name="hora-cita">
+
+            <label for="hora-cita">Hora de la Cita:</label>
             <input type="time" id="hora-cita" name="hora-cita" required>
+            <select id="hours"></select>
+            <select id="minutes"></select>
 
             <label for="motivo-consulta">Motivo de Consulta:</label>
             <textarea id="motivo-consulta" name="motivo-consulta" required></textarea>
@@ -380,18 +385,10 @@
             }
 
             // Generar opciones para el campo de Hora de la Cita
-        function generateHourOptions() {
-            const select = document.getElementById('hora-cita');
-            for (let hour = 0; hour < 24; hour++) {
-                for (let minute = 0; minute < 60; minute += 30) {
-                    const value = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-                    const option = document.createElement('option');
-                    option.value = value;
-                    option.textContent = value;
-                    select.appendChild(option);
-                }
-            }
-        }
+       var minutesSelect = document.getElementById('minutes');
+    for(var i = 0; i < 60; i += 30) {
+        minutesSelect.add(createOption(i, i));
+    }
 
             function showConfirmation() {
                 document.getElementById('confirmationOverlay').style.display = 'flex';
