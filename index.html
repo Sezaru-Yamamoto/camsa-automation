@@ -4,86 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Registro de Citas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* Estilos generales */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            position: relative;
         }
 
-        h2 {
-            color: #34495e;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        form {
+        .form-container {
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 450px;
             width: 100%;
         }
 
-        label {
+        .form-container h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .form-container img {
+            display: block;
+            margin: 0 auto 20px;
+            width: 120px;
+            height: auto;
+        }
+
+        .form-container label {
             font-size: 14px;
             color: #34495e;
             margin-bottom: 5px;
             display: block;
         }
 
-        input[type="text"],
-        input[type="tel"],
-        input[type="date"],
-        input[type="email"],
-        input[type="datetime-local"],
-        textarea {
+        .form-container input[type="text"],
+        .form-container input[type="tel"],
+        .form-container input[type="date"],
+        .form-container input[type="email"],
+        .form-container input[type="datetime-local"],
+        .form-container textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid #ccd1d1;
-            border-radius: 5px;
+            border: 1px solid #dcdde1;
+            border-radius: 8px;
             font-size: 14px;
-            box-sizing: border-box;
+            background-color: #f9fafb;
+            transition: border-color 0.3s;
         }
 
-        input[type="submit"] {
-            background-color: #2ecc71;
+        .form-container input[type="text"]:focus,
+        .form-container input[type="tel"]:focus,
+        .form-container input[type="date"]:focus,
+        .form-container input[type="email"]:focus,
+        .form-container input[type="datetime-local"]:focus,
+        .form-container textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .form-container textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .form-container input[type="submit"] {
+            background-color: #3498db;
             color: white;
-            padding: 10px 15px;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
             width: 100%;
-            transition: background-color 0.3s ease;
+            margin-top: 10px;
         }
 
-        input[type="submit"]:hover {
-            background-color: #27ae60;
+        .form-container input[type="submit"]:hover {
+            background-color: #2980b9;
         }
 
-        textarea {
-            resize: vertical;
-        }
-
-        /* Estilos para móviles */
-        @media (max-width: 480px) {
-            form {
-                padding: 15px;
-            }
-        }
-
-        /* Estilos para el mensaje de confirmación */
         .overlay {
             position: fixed;
             top: 0;
@@ -99,8 +111,8 @@
         .confirmation-box {
             background-color: #fff;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 300px;
         }
@@ -112,49 +124,51 @@
         }
 
         .confirmation-box button {
-            background-color: #2ecc71;
+            background-color: #3498db;
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
         }
 
         .confirmation-box button:hover {
-            background-color: #27ae60;
+            background-color: #2980b9;
         }
     </style>
 </head>
 <body>
-    <form id="patientForm">
+    <div class="form-container">
+        <img src="https://via.placeholder.com/120x120?text=Logo" alt="Logo de la Clínica">
         <h2>Registro de Paciente y Cita</h2>
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
+        <form id="patientForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
 
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido" required>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
 
-        <label for="telefono">Teléfono:</label>
-        <input type="tel" id="telefono" name="telefono" pattern="[0-9]{10}" required>
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" pattern="[0-9]{10}" required>
 
-        <label for="fecha-nacimiento">Fecha de Nacimiento:</label>
-        <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
+            <label for="fecha-nacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
 
-        <label for="correo">Correo Electrónico:</label>
-        <input type="email" id="correo" name="correo" required>
+            <label for="correo">Correo Electrónico:</label>
+            <input type="email" id="correo" name="correo" required>
 
-        <label for="fecha-hora-cita">Fecha y Hora de la Cita:</label>
-        <input type="datetime-local" id="fecha-hora-cita" name="fecha-hora-cita" required>
+            <label for="fecha-hora-cita">Fecha y Hora de la Cita:</label>
+            <input type="datetime-local" id="fecha-hora-cita" name="fecha-hora-cita" required>
 
-        <label for="motivo-consulta">Motivo de Consulta:</label>
-        <textarea id="motivo-consulta" name="motivo-consulta" rows="4" cols="50" required></textarea>
+            <label for="motivo-consulta">Motivo de Consulta:</label>
+            <textarea id="motivo-consulta" name="motivo-consulta" required></textarea>
 
-        <input type="submit" value="Registrar Cita">
-    </form>
+            <input type="submit" value="Registrar Cita">
+        </form>
+    </div>
 
-    <!-- Recuadro de confirmación -->
     <div class="overlay" id="confirmationOverlay">
         <div class="confirmation-box">
             <p>Cita agendada correctamente, enviaremos un mensaje con los detalles al número registrado, ¡Gracias!</p>
@@ -163,36 +177,28 @@
     </div>
 
     <script>
-        // Función para mostrar el recuadro de confirmación
         function showConfirmation() {
             document.getElementById('confirmationOverlay').style.display = 'flex';
         }
 
-        // Función para cerrar el recuadro de confirmación
         function closeConfirmation() {
             document.getElementById('confirmationOverlay').style.display = 'none';
         }
 
-        // Validar la fecha y hora de la cita
         function validarFechaHoraCita(dateTimeInput) {
             var selectedDate = new Date(dateTimeInput);
 
-            // Obtener día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
             var dayOfWeek = selectedDate.getDay();
             var hours = selectedDate.getHours();
 
-            // Validaciones según el día de la semana
             var valid = true;
             if (dayOfWeek === 0) {
-                // Domingo (no permitir)
                 valid = false;
             } else if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-                // Lunes a viernes (10:00 - 18:00)
                 if (hours < 10 || hours >= 18) {
                     valid = false;
                 }
             } else if (dayOfWeek === 6) {
-                // Sábado (10:00 - 16:00)
                 if (hours < 10 || hours >= 16) {
                     valid = false;
                 }
@@ -201,28 +207,24 @@
             return valid;
         }
 
-        // Interceptar el envío del formulario
         document.getElementById('patientForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevenir el envío del formulario
+            event.preventDefault();
             var form = event.target;
 
             var fechaHoraCita = document.getElementById('fecha-hora-cita').value;
 
-            // Validar fecha y hora de la cita
             if (!validarFechaHoraCita(fechaHoraCita)) {
                 alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
-                return; // No continuar si la fecha y hora no son válidas
+                return;
             }
 
-            // Realizar el envío del formulario de manera asíncrona
             fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
                 method: 'POST',
                 body: new FormData(form)
             }).then(function(response) {
-                // Si el envío es exitoso, mostrar el recuadro de confirmación
                 if (response.ok) {
                     showConfirmation();
-                    form.reset(); // Reiniciar el formulario
+                    form.reset();
                 } else {
                     console.error('Error en la respuesta del servidor:', response.statusText);
                 }
