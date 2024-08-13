@@ -174,8 +174,7 @@
         }
 
         // Validar la fecha y hora de la cita
-        document.getElementById('fecha-hora-cita').addEventListener('input', function(event) {
-            var dateTimeInput = event.target.value;
+        function validarFechaHoraCita(dateTimeInput) {
             var selectedDate = new Date(dateTimeInput);
 
             // Obtener día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
@@ -199,17 +198,21 @@
                 }
             }
 
-            // Si la fecha/hora seleccionada no es válida, limpiar el campo
-            if (!valid) {
-                alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
-                event.target.value = '';
-            }
-        });
+            return valid;
+        }
 
         // Interceptar el envío del formulario
         document.getElementById('patientForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevenir el envío del formulario
             var form = event.target;
+
+            var fechaHoraCita = document.getElementById('fecha-hora-cita').value;
+
+            // Validar fecha y hora de la cita
+            if (!validarFechaHoraCita(fechaHoraCita)) {
+                alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
+                return; // No continuar si la fecha y hora no son válidas
+            }
 
             // Realizar el envío del formulario de manera asíncrona
             fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
@@ -219,6 +222,9 @@
                 // Si el envío es exitoso, mostrar el recuadro de confirmación
                 if (response.ok) {
                     showConfirmation();
+                    form.reset(); // Reiniciar el formulario
+                } else {
+                    console.error('Error en la respuesta del servidor:', response.statusText);
                 }
             }).catch(function(error) {
                 console.error('Error al enviar el formulario:', error);
