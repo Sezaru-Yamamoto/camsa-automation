@@ -233,39 +233,32 @@ function obtenerFechasOcupadas() {
 }
 
 // Configuración de flatpickr
-flatpickr(fechaCitaInput, {
-    dateFormat: 'Y-m-d',
-    minDate: 'today',
-    onChange: function(selectedDates) {
-        const fechaSeleccionada = selectedDates[0];
-        if (fechaSeleccionada) {
-            const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
-            actualizarHorasDisponibles(fechaCita);
-        }
-    },
-    onMonthChange: function(selectedDates) {
-        const fechaSeleccionada = selectedDates[0];
-        if (fechaSeleccionada) {
-            const month = fechaSeleccionada.toISOString().split('T')[0].slice(0, 7); // YYYY-MM
-            obtenerFechasOcupadas().then(fechasOcupadas => {
-                const ocupadas = fechasOcupadas.filter(fecha => fecha.startsWith(month));
-                const calendario = document.querySelector('.flatpickr-calendar');
-                const dias = calendario.querySelectorAll('.day');
+  flatpickr(fechaCitaInput, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today',
+        onMonthChange: function(selectedDates) {
+            const fechaSeleccionada = selectedDates[0];
+            if (fechaSeleccionada) {
+                const month = fechaSeleccionada.toISOString().split('T')[0].slice(0, 7); // YYYY-MM
+                obtenerFechasOcupadas().then(fechasOcupadas => {
+                    const ocupadas = fechasOcupadas.filter(fecha => fecha.startsWith(month));
+                    const calendario = document.querySelector('.flatpickr-calendar');
+                    const dias = calendario.querySelectorAll('.day');
 
-                dias.forEach(dia => {
-                    const fechaDia = dia.getAttribute('data-date');
-                    if (ocupadas.includes(fechaDia)) {
-                        dia.style.backgroundColor = 'red';
-                        dia.style.color = 'white';
-                    } else {
-                        dia.style.backgroundColor = 'green';
-                        dia.style.color = 'white';
-                    }
+                    dias.forEach(dia => {
+                        const fechaDia = dia.getAttribute('data-date');
+                        if (ocupadas.includes(fechaDia)) {
+                            dia.style.backgroundColor = 'red';
+                            dia.style.color = 'white';
+                        } else {
+                            dia.style.backgroundColor = 'green';
+                            dia.style.color = 'white';
+                        }
+                    });
                 });
-            });
+            }
         }
-    }
-});
+    });
 
 
             function actualizarHorasDisponibles(fechaCita) {
