@@ -49,6 +49,7 @@
 
         input[type="text"],
         input[type="tel"],
+        input[type="date"],
         input[type="email"],
         select,
         textarea {
@@ -161,24 +162,16 @@
             <button id="confirmationButton">OK</button>
         </div>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
-            const BASE_ID = 'app0HWHKlb3P6MChm.'; // Reemplaza con tu Base ID
+            const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base
             const TABLE_NAME = 'Citas';
 
-            flatpickr("#fecha-cita", {
-                enableTime: false,
-                dateFormat: "Y-m-d",
-                onChange: function(selectedDates, dateStr, instance) {
-                    actualizarHorasDisponibles(dateStr);
-                }
-            });
-
             function obtenerHorasOcupadas(fechaCita) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({fechaCita}, '${fechaCita}', 'day'))`;
+                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fechaCita}', 'day'))`;
 
                 return fetch(url, {
                     headers: {
@@ -187,17 +180,22 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const horasOcupadas = data.records.map(record => record.fields['horaCita']);
+                    const horasOcupadas = data.records.map(record => record.fields['Hora']);
                     return horasOcupadas;
                 });
             }
 
-            function actualizarHorasDisponibles(fechaCita) {
+            function actualizarHorasDisponibles() {
+                const fechaCita = document.getElementById('fecha-cita').value;
+                const horaCita = document.getElementById('hora-cita');
+                
+                if (!fechaCita) {
+                    return;
+                }
+
                 obtenerHorasOcupadas(fechaCita)
                 .then(horasOcupadas => {
-                    const horaCita = document.getElementById('hora-cita');
                     horaCita.innerHTML = '';
-
                     let startHour, endHour;
                     const dayOfWeek = new Date(fechaCita).getDay();
 
@@ -216,51 +214,73 @@
                         ['00', '30'].forEach(minute => {
                             const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
                             const ocupada = horasOcupadas.includes(hora);
-                            horaCita.innerHTML += `<option value="${hora}" data-ocupada="${ocupada}">${hora}</option>`;
+                            horaCita.innerHTML += `<option value="${hora}" style="background-color:${ocupada ? 'red' : 'green'};">${hora}</option>`;
                         });
                     }
-
-                    // Marcar las opciones
-                    document.querySelectorAll('#hora-cita option').forEach(option => {
-                        if (option.dataset.ocupada === 'true') {
-                            option.style.backgroundColor = 'red';
-                            option.style.color = 'white';
-                        } else {
-                            option.style.backgroundColor = 'green';
-                            option.style.color = 'white';
-                        }
-                    });
                 });
             }
 
+            function actualizarValoresMinimos() {
+                const now = new Date();
+                const offset = 0; // CDMX está en UTC0
+                const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
+
+                const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
+                const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+
+                document.getElementById('fecha-cita').setAttribute('min', todayDate);
+
+                const fechaCita = document.getElementById('fecha-cita').value;
+                const horaCita = document.getElementById('hora-cita');
+
+                if (fechaCita === todayDate) {
+                    horaCita.setAttribute('min', currentTime);
+                } else {
+                    horaCita.removeAttribute('min');
+                }
+            }
+
+            flatpickr("#fecha-cita", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        actualizarHorasDisponibles();
+                        actualizarValoresMinimos();
+                    }
+                }
+            });
+
+            document.getElementById('fecha-cita').addEventListener('change', actualizarHorasDisponibles);
             document.getElementById('patientForm').addEventListener('submit', function(event) {
                 event.preventDefault();
 
-                const formData = new FormData(event.target);
+                const formData = new FormData(this);
                 const data = {};
+
                 formData.forEach((value, key) => {
                     data[key] = value;
                 });
 
-                fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', { // Reemplaza con tu URL de webhook de Make
+                fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(result => {
-                    console.log('Success:', result);
-                    document.getElementById('confirmationOverlay').style.display = 'flex';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('confirmationOverlay').style.display = 'flex';
+                    } else {
+                        alert('Hubo un problema al registrar la cita.');
+                    }
                 });
             });
 
             document.getElementById('confirmationButton').addEventListener('click', function() {
                 document.getElementById('confirmationOverlay').style.display = 'none';
+                document.getElementById('patientForm').reset();
             });
         });
     </script>
