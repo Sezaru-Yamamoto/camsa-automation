@@ -265,12 +265,12 @@
         </form>
     </div>
 
-    <div class="overlay" id="confirmationOverlay">
-        <div class="confirmation-box">
-            <p>Cita agendada correctamente, enviaremos un mensaje con los detalles al número registrado, ¡Gracias!</p>
-            <button onclick="closeConfirmation()">Ok</button>
-        </div>
+    <div id="confirmationOverlay" style="display: none;">
+    <div id="confirmationMessage">
+        <p>¡Tu cita ha sido registrada correctamente!</p>
+        <button id="confirmationButton">OK</button>
     </div>
+</div>
 
      <script>
      document.addEventListener('DOMContentLoaded', function() {
@@ -417,14 +417,15 @@
         return minutes === 0 || minutes === 30;
     }
 
-    function showConfirmation() {
-        document.getElementById('confirmationOverlay').style.display = 'flex';
-    }
+     // Agregar el event listener para el botón de confirmación
+    document.getElementById('confirmationButton').addEventListener('click', function() {
+        closeConfirmation();
+    });
 
+    // Función para cerrar el mensaje de confirmación
     function closeConfirmation() {
         document.getElementById('confirmationOverlay').style.display = 'none';
     }
-
     document.getElementById('modeToggle').addEventListener('change', function() {
         document.body.classList.toggle('dark-mode');
     });
