@@ -289,45 +289,68 @@
     }
 
     function actualizarValoresMinimos() {
-        const now = new Date();
-        const offset = 0; // CDMX está en UTC0
-        const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
+    const now = new Date();
+    const offset = 0; // CDMX está en UTC0
+    const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
 
-        const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
-        const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+    // Formatear la fecha y hora en el formato adecuado para los campos
+    const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
+    const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
 
-        const fechaCita = document.getElementById('fecha-cita').value;
-        const horaCita = document.getElementById('hora-cita');
+    // Establecer el valor mínimo para el campo de fecha
+    document.getElementById('fecha-cita').setAttribute('min', todayDate);
 
-        document.getElementById('fecha-cita').setAttribute('min', todayDate);
+    // Actualizar la hora mínima dependiendo de la fecha seleccionada
+    const fechaCita = document.getElementById('fecha-cita').value;
+    const horaCita = document.getElementById('hora-cita');
 
-        if (fechaCita === todayDate) {
-            horaCita.setAttribute('min', currentTime);
-        } else {
-            horaCita.removeAttribute('min');
-        }
+    if (fechaCita === todayDate) {
+        horaCita.setAttribute('min', currentTime);
+    } else {
+        horaCita.removeAttribute('min');
+    }
+}
+
+
+  document.getElementById('fecha-cita').addEventListener('change', function() {
+    const fechaCita = new Date(this.value);
+    const dayOfWeek = fechaCita.getDay();
+    const horaCita = document.getElementById('hora-cita');
+    
+    // Limpiar opciones de hora
+    horaCita.innerHTML = '';
+
+    let startHour, endHour;
+    switch (dayOfWeek) {
+        case 0: // Domingo
+            return; // No permitir seleccionar fechas en domingos
+        case 6: // Sábado
+            startHour = 10;
+            endHour = 16;
+            break;
+        default: // Lunes a Viernes
+            startHour = 10;
+            endHour = 18;
+            break;
     }
 
-    function actualizarOpcionesHora() {
-        const fechaCita = document.getElementById('fecha-cita').value;
-        if (!fechaCita) return;
+    // Agregar las opciones de hora en intervalos de 30 minutos
+    for (let hour = startHour; hour < endHour; hour++) {
+        const option1 = document.createElement('option');
+        const option2 = document.createElement('option');
+        
+        option1.value = option2.value = `${hour.toString().padStart(2, '0')}:00`;
+        option1.textContent = option2.textContent = `${hour.toString().padStart(2, '0')}:00`;
 
-        const fecha = new Date(fechaCita);
-        const dayOfWeek = fecha.getDay();
+        const option30 = document.createElement('option');
+        option30.value = `${hour.toString().padStart(2, '0')}:30`;
+        option30.textContent = `${hour.toString().padStart(2, '0')}:30`;
 
-        if (dayOfWeek === 0) {
-            // Deshabilitar fecha en el selector de fecha
-            document.getElementById('hora-cita').innerHTML = '<option value="">No disponible</option>';
-            document.getElementById('hora-cita').setAttribute('disabled', 'true');
-        } else {
-            document.getElementById('hora-cita').removeAttribute('disabled');
-            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-                generarOpcionesHora(10, 18); // Lunes a Viernes: 10am a 6pm
-            } else if (dayOfWeek === 6) {
-                generarOpcionesHora(10, 16); // Sábado: 10am a 4pm
-            }
-        }
+        horaCita.appendChild(option1);
+        horaCita.appendChild(option30);
     }
+});
+
 
     document.getElementById('fecha-cita').addEventListener('change', function() {
         actualizarValoresMinimos();
