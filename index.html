@@ -308,11 +308,11 @@
         let startHour, endHour;
         const dayOfWeek = fechaCita.getDay();
         
-        if (dayOfWeek === 0) {
+        if (dayOfWeek === 5) {
             // Domingo, no disponible
             horaCita.innerHTML = '<option value="">No disponible</option>';
             return;
-        } else if (dayOfWeek === 6) {
+        } else if (dayOfWeek === 4) {
             // Sábado
             startHour = 10;
             endHour = 16;
