@@ -202,25 +202,28 @@
         console.error('Error al obtener horas ocupadas:', error);
     });
 }
+
+        //Mostrar en verde y/o rojo, las opciones disponibles.
         function actualizarHorasDisponibles() {
     const fechaCita = document.getElementById('fecha-cita').value;
-    if (!fechaCita) return;
+    const horaCita = document.getElementById('hora-cita');
+    
+    if (!fechaCita) return; // No hacer nada si no hay fecha
 
     obtenerHorasOcupadas(fechaCita)
     .then(horasOcupadas => {
-        const horaCita = document.getElementById('hora-cita');
-        horaCita.innerHTML = ''; // Limpiar opciones anteriores
+        horaCita.innerHTML = ''; // Limpiar las opciones actuales
 
         let startHour, endHour;
         const dayOfWeek = new Date(fechaCita).getDay();
 
-        if (dayOfWeek === 0) { // Domingo
+        if (dayOfWeek === 0) {
             horaCita.innerHTML = '<option value="">No disponible</option>';
             return;
-        } else if (dayOfWeek === 6) { // Sábado
+        } else if (dayOfWeek === 6) {
             startHour = 10;
             endHour = 16;
-        } else { // Lunes a Viernes
+        } else {
             startHour = 10;
             endHour = 18;
         }
@@ -234,9 +237,10 @@
         }
     })
     .catch(error => {
-        console.error('Error al obtener las horas ocupadas:', error);
+        console.error('Error al actualizar horas disponibles:', error);
     });
 }
+        
         function actualizarValoresMinimos() {
             const now = new Date();
             const offset = 0; // CDMX está en UTC0
