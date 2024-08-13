@@ -173,38 +173,24 @@
             document.getElementById('confirmationOverlay').style.display = 'none';
         }
 
-        // Validar la fecha y hora de la cita
-        document.getElementById('fecha-hora-cita').addEventListener('input', function(event) {
-            var dateTimeInput = event.target.value;
-            var selectedDate = new Date(dateTimeInput);
+        // Cargar horas ocupadas y disponibles al cargar la página
+        window.onload = function() {
+            fetch('https://hook.us1.make.com/tu-webhook-url') // URL del webhook que consulta la base de datos
+                .then(response => response.json())
+                .then(data => {
+                    const ocupadas = data.ocupadas; // Suponiendo que las fechas ocupadas vienen en un array
+                    const dateTimeInput = document.getElementById('fecha-hora-cita');
 
-            // Obtener día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
-            var dayOfWeek = selectedDate.getUTCDay();
-            var hours = selectedDate.getUTCHours();
-
-            // Validaciones según el día de la semana
-            var valid = true;
-            if (dayOfWeek === 0) {
-                // Domingo (no permitir)
-                valid = false;
-            } else if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-                // Lunes a viernes (10:00 - 18:00)
-                if (hours < 10 || hours >= 18) {
-                    valid = false;
-                }
-            } else if (dayOfWeek === 6) {
-                // Sábado (10:00 - 16:00)
-                if (hours < 10 || hours >= 16) {
-                    valid = false;
-                }
-            }
-
-            // Si la fecha/hora seleccionada no es válida, limpiar el campo
-            if (!valid) {
-                alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
-                event.target.value = '';
-            }
-        });
+                    // Agregar color a las fechas y horas ocupadas
+                    ocupadas.forEach(ocupada => {
+                        // Si se puede modificar la UI para cambiar colores según fechas ocupadas,
+                        // Aquí puedes usar bibliotecas como flatpickr para aplicar estos cambios.
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar las horas ocupadas:', error);
+                });
+        };
 
         // Interceptar el envío del formulario
         document.getElementById('patientForm').addEventListener('submit', function(event) {
