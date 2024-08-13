@@ -6,7 +6,76 @@
     <title>Formulario de Registro de Citas</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* Tu CSS existente aquí */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .form-container img {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f4f4f9;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
 
         .overlay {
             position: fixed;
@@ -21,7 +90,7 @@
         }
 
         .confirmation-box {
-            background-color: var(--form-bg-color);
+            background-color: #ffffff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -33,12 +102,12 @@
         .confirmation-box p {
             margin: 0 0 20px 0;
             font-size: 16px;
-            color: var(--text-color);
+            color: #333;
         }
 
         .confirmation-box button {
-            background-color: var(--button-bg-color);
-            color: var(--button-text-color);
+            background-color: #007bff;
+            color: #fff;
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
@@ -48,21 +117,15 @@
         }
 
         .confirmation-box button:hover {
-            background-color: var(--button-hover-bg-color);
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="toggle-container">
-        <label for="modeToggle">Modo oscuro</label>
-        <input type="checkbox" id="modeToggle">
-    </div>
-
     <div class="form-container">
-        <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.maily.com.mx%2Fmaily&psig=AOvVaw30BvwZkZJ9RZtKTLqHiTPg&ust=1723615649785000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOibqOam8YcDFQAAAAAdAAAAABAR" alt="Logo de la Clínica">
+        <img src="https://www.maily.com.mx/images/maily_logo.svg" alt="Logo de la Clínica">
         <h2>Registro de Paciente y Cita</h2>
         <form id="patientForm">
-            <!-- Campos del formulario -->
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required>
 
@@ -92,7 +155,7 @@
     </div>
 
     <!-- Overlay de confirmación -->
-    <div id="confirmationOverlay" class="overlay" style="display: none;">
+    <div id="confirmationOverlay" class="overlay">
         <div id="confirmationMessage" class="confirmation-box">
             <p>¡Tu cita ha sido registrada correctamente!</p>
             <button id="confirmationButton">OK</button>
@@ -106,14 +169,11 @@
                 const offset = 0; // CDMX está en UTC0
                 const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
 
-                // Formatear la fecha y hora en el formato adecuado para los campos
                 const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
                 const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
 
-                // Establecer el valor mínimo para el campo de fecha
                 document.getElementById('fecha-cita').setAttribute('min', todayDate);
 
-                // Actualizar la hora mínima dependiendo de la fecha seleccionada
                 const fechaCita = document.getElementById('fecha-cita').value;
                 const horaCita = document.getElementById('hora-cita');
 
@@ -128,38 +188,30 @@
                 const fechaCita = new Date(document.getElementById('fecha-cita').value);
                 const horaCita = document.getElementById('hora-cita');
 
-                // Limpiar las opciones actuales
                 horaCita.innerHTML = '';
 
-                // Definir horarios disponibles
                 let startHour, endHour;
                 const dayOfWeek = fechaCita.getDay();
                 
                 if (dayOfWeek === 0) {
-                    // Domingo, no disponible
                     horaCita.innerHTML = '<option value="">No disponible</option>';
                     return;
                 } else if (dayOfWeek === 6) {
-                    // Sábado
                     startHour = 10;
                     endHour = 16;
                 } else {
-                    // Lunes a Viernes
                     startHour = 10;
                     endHour = 18;
                 }
 
                 for (let hour = startHour; hour < endHour; hour++) {
-                    // Añadir opciones para cada 30 minutos
                     horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:00">${hour}:00</option>`;
                     horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:30">${hour}:30</option>`;
                 }
             }
 
-            // Inicializar los valores mínimos cuando se carga la página
             actualizarValoresMinimos();
 
-            // Actualizar hora mínima y horas disponibles cuando cambie la fecha
             document.getElementById('fecha-cita').addEventListener('change', function() {
                 actualizarValoresMinimos();
                 actualizarHorasDisponibles();
@@ -169,7 +221,6 @@
                 event.preventDefault();
                 var form = event.target;
 
-                // Recoger datos del formulario
                 var nombre = document.getElementById('nombre').value;
                 var apellido = document.getElementById('apellido').value;
                 var telefono = document.getElementById('telefono').value;
@@ -179,38 +230,31 @@
                 var horaCita = document.getElementById('hora-cita').value;
                 var motivoConsulta = document.getElementById('motivo-consulta').value;
 
-                // Validar que la hora esté en intervalos de 30 minutos
-                if (!validarIntervalo30Minutos(horaCita)) {
-                    alert("Por favor, selecciona una hora en intervalos de 30 minutos.");
-                    return;
-                }
+                var payload = {
+                    nombre: nombre,
+                    apellido: apellido,
+                    telefono: telefono,
+                    fechaNacimiento: fechaNacimiento,
+                    correo: correo,
+                    fechaCita: fechaCita,
+                    horaCita: horaCita,
+                    motivoConsulta: motivoConsulta
+                };
 
-                // Validar fecha y hora
-                var fechaHoraCita = new Date(fechaCita + 'T' + horaCita);
-                if (!validarFechaHoraCita(fechaHoraCita)) {
-                    alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
-                    return;
-                }
-
-                // Crear un objeto FormData y añadir los datos
-                var formData = new FormData();
-                formData.append('nombre', nombre);
-                formData.append('apellido', apellido);
-                formData.append('telefono', telefono);
-                formData.append('fecha-nacimiento', fechaNacimiento);
-                formData.append('correo', correo);
-                formData.append('fecha-cita', fechaCita);
-                formData.append('hora-cita', horaCita);
-                formData.append('motivo-consulta', motivoConsulta);
-
-                // Enviar datos del formulario usando Fetch API
                 fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud');
+                    }
+                    return response.text();
+                })
                 .then(data => {
-                    // Mostrar el mensaje de confirmación
                     document.getElementById('confirmationOverlay').style.display = 'flex';
                 })
                 .catch(error => {
@@ -218,33 +262,10 @@
                 });
             });
 
-            // Manejo del botón de confirmación
             document.getElementById('confirmationButton').addEventListener('click', function() {
                 document.getElementById('confirmationOverlay').style.display = 'none';
                 document.getElementById('patientForm').reset();
             });
-
-            function validarIntervalo30Minutos(hora) {
-                // Función para validar que la hora está en intervalos de 30 minutos
-                const [hours, minutes] = hora.split(':').map(Number);
-                return minutes === 0 || minutes === 30;
-            }
-
-            function validarFechaHoraCita(fechaHoraCita) {
-                // Función para validar la fecha y hora de la cita
-                const diaSemana = fechaHoraCita.getDay();
-                const hora = fechaHoraCita.getHours();
-
-                if (diaSemana === 0) {
-                    return false; // Domingo no disponible
-                } else if (diaSemana === 6) {
-                    // Sábado
-                    return hora >= 10 && hora < 16;
-                } else {
-                    // Lunes a Viernes
-                    return hora >= 10 && hora < 18;
-                }
-            }
         });
     </script>
 </body>
