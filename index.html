@@ -7,6 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
+        /* Estilos personalizados para flatpickr */
+.flatpickr-calendar .day[data-date] {
+    background-color: white; /* Color de fondo por defecto */
+}
+
+/* Días ocupados */
+.flatpickr-calendar .day[data-date][style*="background-color: red"] {
+    background-color: red !important;
+    color: white !important;
+}
+
+/* Días disponibles */
+.flatpickr-calendar .day[data-date][style*="background-color: green"] {
+    background-color: green !important;
+    color: white !important;
+}
+        
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f9;
