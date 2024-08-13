@@ -178,8 +178,8 @@
             var selectedDate = new Date(dateTimeInput);
 
             // Obtener día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
-            var dayOfWeek = selectedDate.getUTCDay();
-            var hours = selectedDate.getUTCHours();
+            var dayOfWeek = selectedDate.getDay();
+            var hours = selectedDate.getHours();
 
             // Validaciones según el día de la semana
             var valid = true;
