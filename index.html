@@ -167,8 +167,23 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
-            const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base
+            const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
             const TABLE_NAME = 'Citas';
+
+            const fechaCitaInput = document.getElementById('fecha-cita');
+            const horaCitaSelect = document.getElementById('hora-cita');
+
+            flatpickr(fechaCitaInput, {
+                dateFormat: 'Y-m-d',
+                minDate: 'today',
+                onChange: function(selectedDates) {
+                    const fechaSeleccionada = selectedDates[0];
+                    if (fechaSeleccionada) {
+                        const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
+                        actualizarHorasDisponibles(fechaCita);
+                    }
+                }
+            });
 
             function obtenerHorasOcupadas(fechaCita) {
                 const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fechaCita}', 'day'))`;
@@ -185,27 +200,20 @@
                 });
             }
 
-            function actualizarHorasDisponibles() {
-                const fechaCita = document.getElementById('fecha-cita').value;
-                const horaCita = document.getElementById('hora-cita');
-                
-                if (!fechaCita) {
-                    return;
-                }
-
+            function actualizarHorasDisponibles(fechaCita) {
                 obtenerHorasOcupadas(fechaCita)
                 .then(horasOcupadas => {
-                    horaCita.innerHTML = '';
+                    horaCitaSelect.innerHTML = '';
                     let startHour, endHour;
                     const dayOfWeek = new Date(fechaCita).getDay();
 
-                    if (dayOfWeek === 0) { // Domingo
-                        horaCita.innerHTML = '<option value="">No disponible</option>';
+                    if (dayOfWeek === 0) {
+                        horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
                         return;
-                    } else if (dayOfWeek === 6) { // Sábado
+                    } else if (dayOfWeek === 6) {
                         startHour = 10;
                         endHour = 16;
-                    } else { // Lunes a Viernes
+                    } else {
                         startHour = 10;
                         endHour = 18;
                     }
@@ -214,44 +222,19 @@
                         ['00', '30'].forEach(minute => {
                             const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
                             const ocupada = horasOcupadas.includes(hora);
-                            horaCita.innerHTML += `<option value="${hora}" style="background-color:${ocupada ? 'red' : 'green'};">${hora}</option>`;
+                            horaCitaSelect.innerHTML += `<option value="${hora}" style="background-color:${ocupada ? 'red' : 'green'};">${hora}</option>`;
                         });
                     }
                 });
             }
 
-            function actualizarValoresMinimos() {
-                const now = new Date();
-                const offset = 0; // CDMX está en UTC0
-                const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
-
-                const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
-                const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
-
-                document.getElementById('fecha-cita').setAttribute('min', todayDate);
-
-                const fechaCita = document.getElementById('fecha-cita').value;
-                const horaCita = document.getElementById('hora-cita');
-
-                if (fechaCita === todayDate) {
-                    horaCita.setAttribute('min', currentTime);
-                } else {
-                    horaCita.removeAttribute('min');
-                }
-            }
-
-            flatpickr("#fecha-cita", {
-                minDate: "today",
-                dateFormat: "Y-m-d",
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        actualizarHorasDisponibles();
-                        actualizarValoresMinimos();
-                    }
+            document.getElementById('fecha-cita').addEventListener('change', function() {
+                const fechaCita = this.value;
+                if (fechaCita) {
+                    actualizarHorasDisponibles(fechaCita);
                 }
             });
 
-            document.getElementById('fecha-cita').addEventListener('change', actualizarHorasDisponibles);
             document.getElementById('patientForm').addEventListener('submit', function(event) {
                 event.preventDefault();
 
@@ -280,7 +263,6 @@
 
             document.getElementById('confirmationButton').addEventListener('click', function() {
                 document.getElementById('confirmationOverlay').style.display = 'none';
-                document.getElementById('patientForm').reset();
             });
         });
     </script>
