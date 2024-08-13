@@ -271,39 +271,73 @@
     </div>
 
     <script>
-        // Toggle Dark Mode
-        const modeToggle = document.getElementById('modeToggle');
-        const body = document.body;
+    // Toggle Dark Mode
+    const modeToggle = document.getElementById('modeToggle');
+    const body = document.body;
 
-        modeToggle.addEventListener('change', () => {
-            body.classList.toggle('dark-mode', modeToggle.checked);
-        });
+    modeToggle.addEventListener('change', () => {
+        body.classList.toggle('dark-mode', modeToggle.checked);
+    });
 
-        // Form submission handler
-        const form = document.getElementById('patientForm');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent actual form submission
+    // Form submission handler
+    const form = document.getElementById('patientForm');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent actual form submission
 
-            // Extract date and time values
-            const fechaCita = document.getElementById('fecha-cita').value;
-            const horaCita = document.getElementById('hora-cita').value;
+        // Extract form values
+        const nombre = document.getElementById('nombre').value;
+        const apellido = document.getElementById('apellido').value;
+        const telefono = document.getElementById('telefono').value;
+        const fechaNacimiento = document.getElementById('fecha-nacimiento').value;
+        const correo = document.getElementById('correo').value;
+        const fechaCita = document.getElementById('fecha-cita').value;
+        const horaCita = document.getElementById('hora-cita').value;
+        const comentarios = document.getElementById('comentarios').value;
 
-            // Combine them into a single datetime string in the format needed
-            const fechaHoraCita = `${fechaCita}T${horaCita}`;
+        // Combine date and time into one datetime string
+        const fechaHoraCita = `${fechaCita}T${horaCita}`;
 
-            // Log the date-time for debugging (remove in production)
-            console.log('Fecha y Hora de Cita:', fechaHoraCita);
+        // Prepare data for webhook
+        const data = {
+            nombre,
+            apellido,
+            telefono,
+            fechaNacimiento,
+            correo,
+            fechaHoraCita,
+            comentarios
+        };
 
-            // Here you could send the data to your backend or API
-            // Example: sendDataToServer({ fechaHoraCita });
+        // Define the webhook URL
+        const webhookUrl = 'hhttps://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p';
 
+        // Send data to the webhook using fetch
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Show confirmation message
             document.getElementById('confirmationOverlay').style.display = 'flex';
-        });
-
-        function closeConfirmation() {
-            document.getElementById('confirmationOverlay').style.display = 'none';
-            form.reset(); // Reset the form fields
+        } catch (error) {
+            console.error('Error sending data to webhook:', error);
+            alert('Hubo un error al registrar la cita. Por favor, inténtalo de nuevo.');
         }
-    </script>
+    });
+
+    function closeConfirmation() {
+        document.getElementById('confirmationOverlay').style.display = 'none';
+        form.reset(); // Reset the form fields
+    }
+</script>
+
 </body>
 </html>
