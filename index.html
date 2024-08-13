@@ -6,105 +6,7 @@
     <title>Formulario de Registro de Citas</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .form-container {
-            background-color: var(--form-bg-color);
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 450px;
-            width: 100%;
-            box-sizing: border-box;
-            transition: background-color 0.3s;
-        }
-
-        .form-container h2 {
-            text-align: center;
-            color: var(--heading-color);
-            font-weight: 500;
-            margin-bottom: 20px;
-        }
-
-        .form-container img {
-            display: block;
-            margin: 0 auto 20px;
-            width: 120px;
-            height: auto;
-        }
-
-        .form-container label {
-            font-size: 14px;
-            color: var(--label-color);
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .form-container input[type="text"],
-        .form-container input[type="tel"],
-        .form-container input[type="date"],
-        .form-container input[type="email"],
-        .form-container input[type="time"],
-        .form-container input[type="date"],
-        .form-container textarea {
-            width: calc(100% - 24px);
-            padding: 12px;
-            margin-bottom: 15px;
-            margin-left: 12px;
-            margin-right: 12px;
-            border: 1px solid var(--input-border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            background-color: var(--input-bg-color);
-            color: var(--input-text-color);
-            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
-        }
-
-        .form-container input[type="text"]:focus,
-        .form-container input[type="tel"]:focus,
-        .form-container input[type="date"]:focus,
-        .form-container input[type="email"]:focus,
-        .form-container input[type="time"],
-        .form-container input[type="date"],
-        .form-container textarea:focus {
-            border-color: var(--focus-border-color);
-            outline: none;
-        }
-
-        .form-container textarea {
-            resize: vertical;
-            height: 100px;
-        }
-
-        .form-container input[type="submit"] {
-            background-color: var(--button-bg-color);
-            color: var(--button-text-color);
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-            width: calc(100% - 24px);
-            margin-left: 12px;
-            margin-top: 10px;
-        }
-
-        .form-container input[type="submit"]:hover {
-            background-color: var(--button-hover-bg-color);
-        }
+        /* Tu CSS existente aquí */
 
         .overlay {
             position: fixed;
@@ -125,6 +27,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 300px;
+            width: 100%;
         }
 
         .confirmation-box p {
@@ -147,96 +50,19 @@
         .confirmation-box button:hover {
             background-color: var(--button-hover-bg-color);
         }
-
-        /* Estilos para el toggle de modo oscuro */
-        .toggle-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .toggle-container label {
-            margin-right: 10px;
-            color: var(--text-color);
-        }
-
-        .toggle-container input {
-            width: 40px;
-            height: 20px;
-            -webkit-appearance: none;
-            background-color: var(--input-border-color);
-            outline: none;
-            border-radius: 20px;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .toggle-container input:checked {
-            background-color: #3498db;
-        }
-
-        .toggle-container input:before {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: white;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-        }
-
-        .toggle-container input:checked:before {
-            transform: translateX(20px);
-        }
-
-        /* Variables para los colores */
-        :root {
-            --bg-color: #f0f2f5;
-            --text-color: #333;
-            --form-bg-color: #ffffff;
-            --input-bg-color: #f9fafb;
-            --input-text-color: #333;
-            --input-border-color: #dcdde1;
-            --focus-border-color: #3498db;
-            --button-bg-color: #3498db;
-            --button-text-color: #fff;
-            --button-hover-bg-color: #2980b9;
-            --heading-color: #2c3e50;
-            --label-color: #34495e;
-        }
-
-        /* Modo oscuro */
-        .dark-mode {
-            --bg-color: #2c3e50;
-            --text-color: #ecf0f1;
-            --form-bg-color: #34495e;
-            --input-bg-color: #3c5871;
-            --input-text-color: #ecf0f1;
-            --input-border-color: #3c5871;
-            --focus-border-color: #1abc9c;
-            --button-bg-color: #1abc9c;
-            --button-text-color: #fff;
-            --button-hover-bg-color: #16a085;
-            --heading-color: #ecf0f1;
-            --label-color: #bdc3c7;
-        }
     </style>
 </head>
 <body>
-       <div class="toggle-container">
+    <div class="toggle-container">
         <label for="modeToggle">Modo oscuro</label>
         <input type="checkbox" id="modeToggle">
     </div>
-    
+
     <div class="form-container">
         <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.maily.com.mx%2Fmaily&psig=AOvVaw30BvwZkZJ9RZtKTLqHiTPg&ust=1723615649785000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOibqOam8YcDFQAAAAAdAAAAABAR" alt="Logo de la Clínica">
         <h2>Registro de Paciente y Cita</h2>
         <form id="patientForm">
+            <!-- Campos del formulario -->
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required>
 
@@ -265,173 +91,161 @@
         </form>
     </div>
 
-    <div id="confirmationOverlay" style="display: none;">
-    <div id="confirmationMessage">
-        <p>¡Tu cita ha sido registrada correctamente!</p>
-        <button id="confirmationButton">OK</button>
+    <!-- Overlay de confirmación -->
+    <div id="confirmationOverlay" class="overlay" style="display: none;">
+        <div id="confirmationMessage" class="confirmation-box">
+            <p>¡Tu cita ha sido registrada correctamente!</p>
+            <button id="confirmationButton">OK</button>
+        </div>
     </div>
-</div>
 
-     <script>
-     document.addEventListener('DOMContentLoaded', function() {
-    function actualizarValoresMinimos() {
-        const now = new Date();
-        const offset = 0; // CDMX está en UTC0
-        const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function actualizarValoresMinimos() {
+                const now = new Date();
+                const offset = 0; // CDMX está en UTC0
+                const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
 
-        // Formatear la fecha y hora en el formato adecuado para los campos
-        const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
-        const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+                // Formatear la fecha y hora en el formato adecuado para los campos
+                const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
+                const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
 
-        // Establecer el valor mínimo para el campo de fecha
-        document.getElementById('fecha-cita').setAttribute('min', todayDate);
+                // Establecer el valor mínimo para el campo de fecha
+                document.getElementById('fecha-cita').setAttribute('min', todayDate);
 
-        // Actualizar la hora mínima dependiendo de la fecha seleccionada
-        const fechaCita = document.getElementById('fecha-cita').value;
-        const horaCita = document.getElementById('hora-cita');
+                // Actualizar la hora mínima dependiendo de la fecha seleccionada
+                const fechaCita = document.getElementById('fecha-cita').value;
+                const horaCita = document.getElementById('hora-cita');
 
-        if (fechaCita === todayDate) {
-            horaCita.setAttribute('min', currentTime);
-        } else {
-            horaCita.removeAttribute('min');
-        }
-    }
-
-    function actualizarHorasDisponibles() {
-        const fechaCita = new Date(document.getElementById('fecha-cita').value);
-        const horaCita = document.getElementById('hora-cita');
-
-        // Limpiar las opciones actuales
-        horaCita.innerHTML = '';
-
-        // Definir horarios disponibles
-        let startHour, endHour;
-        const dayOfWeek = fechaCita.getDay();
-        
-        if (dayOfWeek === 6) {
-            // Domingo, no disponible
-            horaCita.innerHTML = '<option value="">No disponible</option>';
-            return;
-        } else if (dayOfWeek === 5) {
-            // Sábado
-            startHour = 10;
-            endHour = 16;
-        } else {
-            // Lunes a Viernes
-            startHour = 10;
-            endHour = 18;
-        }
-
-        for (let hour = startHour; hour < endHour; hour++) {
-            // Añadir opciones para cada 30 minutos
-            horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:00">${hour}:00</option>`;
-            horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:30">${hour}:30</option>`;
-        }
-    }
-
-    // Inicializar los valores mínimos cuando se carga la página
-    actualizarValoresMinimos();
-
-    // Actualizar hora mínima cuando cambie la fecha
-    document.getElementById('fecha-cita').addEventListener('change', function() {
-        actualizarValoresMinimos();
-        actualizarHorasDisponibles();
-    });
-
-    document.getElementById('patientForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        var form = event.target;
-
-        // Recoger datos del formulario
-        var nombre = document.getElementById('nombre').value;
-        var apellido = document.getElementById('apellido').value;
-        var telefono = document.getElementById('telefono').value;
-        var fechaNacimiento = document.getElementById('fecha-nacimiento').value;
-        var correo = document.getElementById('correo').value;
-        var fechaCita = document.getElementById('fecha-cita').value;
-        var horaCita = document.getElementById('hora-cita').value;
-        var motivoConsulta = document.getElementById('motivo-consulta').value;
-
-        // Validar que la hora esté en intervalos de 30 minutos
-        if (!validarIntervalo30Minutos(horaCita)) {
-            alert("Por favor, selecciona una hora en intervalos de 30 minutos.");
-            return;
-        }
-
-        // Validar fecha y hora
-        var fechaHoraCita = new Date(fechaCita + 'T' + horaCita);
-        if (!validarFechaHoraCita(fechaHoraCita)) {
-            alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
-            return;
-        }
-
-        // Crear un objeto FormData y añadir los datos
-        var formData = new FormData();
-        formData.append('nombre', nombre);
-        formData.append('apellido', apellido);
-        formData.append('telefono', telefono);
-        formData.append('fecha-nacimiento', fechaNacimiento);
-        formData.append('correo', correo);
-        formData.append('fecha-cita', fechaCita);
-        formData.append('hora-cita', horaCita);
-        formData.append('motivo-consulta', motivoConsulta);
-
-        // Enviar datos a la webhook de Make
-        fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
-            method: 'POST',
-            body: formData
-        }).then(function(response) {
-            if (response.ok) {
-                showConfirmation();
-                form.reset();
-            } else {
-                console.error('Error en la respuesta del servidor:', response.statusText);
+                if (fechaCita === todayDate) {
+                    horaCita.setAttribute('min', currentTime);
+                } else {
+                    horaCita.removeAttribute('min');
+                }
             }
-        }).catch(function(error) {
-            console.error('Error al enviar el formulario:', error);
+
+            function actualizarHorasDisponibles() {
+                const fechaCita = new Date(document.getElementById('fecha-cita').value);
+                const horaCita = document.getElementById('hora-cita');
+
+                // Limpiar las opciones actuales
+                horaCita.innerHTML = '';
+
+                // Definir horarios disponibles
+                let startHour, endHour;
+                const dayOfWeek = fechaCita.getDay();
+                
+                if (dayOfWeek === 0) {
+                    // Domingo, no disponible
+                    horaCita.innerHTML = '<option value="">No disponible</option>';
+                    return;
+                } else if (dayOfWeek === 6) {
+                    // Sábado
+                    startHour = 10;
+                    endHour = 16;
+                } else {
+                    // Lunes a Viernes
+                    startHour = 10;
+                    endHour = 18;
+                }
+
+                for (let hour = startHour; hour < endHour; hour++) {
+                    // Añadir opciones para cada 30 minutos
+                    horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:00">${hour}:00</option>`;
+                    horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:30">${hour}:30</option>`;
+                }
+            }
+
+            // Inicializar los valores mínimos cuando se carga la página
+            actualizarValoresMinimos();
+
+            // Actualizar hora mínima y horas disponibles cuando cambie la fecha
+            document.getElementById('fecha-cita').addEventListener('change', function() {
+                actualizarValoresMinimos();
+                actualizarHorasDisponibles();
+            });
+
+            document.getElementById('patientForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                var form = event.target;
+
+                // Recoger datos del formulario
+                var nombre = document.getElementById('nombre').value;
+                var apellido = document.getElementById('apellido').value;
+                var telefono = document.getElementById('telefono').value;
+                var fechaNacimiento = document.getElementById('fecha-nacimiento').value;
+                var correo = document.getElementById('correo').value;
+                var fechaCita = document.getElementById('fecha-cita').value;
+                var horaCita = document.getElementById('hora-cita').value;
+                var motivoConsulta = document.getElementById('motivo-consulta').value;
+
+                // Validar que la hora esté en intervalos de 30 minutos
+                if (!validarIntervalo30Minutos(horaCita)) {
+                    alert("Por favor, selecciona una hora en intervalos de 30 minutos.");
+                    return;
+                }
+
+                // Validar fecha y hora
+                var fechaHoraCita = new Date(fechaCita + 'T' + horaCita);
+                if (!validarFechaHoraCita(fechaHoraCita)) {
+                    alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
+                    return;
+                }
+
+                // Crear un objeto FormData y añadir los datos
+                var formData = new FormData();
+                formData.append('nombre', nombre);
+                formData.append('apellido', apellido);
+                formData.append('telefono', telefono);
+                formData.append('fecha-nacimiento', fechaNacimiento);
+                formData.append('correo', correo);
+                formData.append('fecha-cita', fechaCita);
+                formData.append('hora-cita', horaCita);
+                formData.append('motivo-consulta', motivoConsulta);
+
+                // Enviar datos del formulario usando Fetch API
+                fetch('tu-url-de-webhook', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Mostrar el mensaje de confirmación
+                    document.getElementById('confirmationOverlay').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            // Manejo del botón de confirmación
+            document.getElementById('confirmationButton').addEventListener('click', function() {
+                document.getElementById('confirmationOverlay').style.display = 'none';
+                document.getElementById('patientForm').reset();
+            });
+
+            function validarIntervalo30Minutos(hora) {
+                // Función para validar que la hora está en intervalos de 30 minutos
+                const [hours, minutes] = hora.split(':').map(Number);
+                return minutes === 0 || minutes === 30;
+            }
+
+            function validarFechaHoraCita(fechaHoraCita) {
+                // Función para validar la fecha y hora de la cita
+                const diaSemana = fechaHoraCita.getDay();
+                const hora = fechaHoraCita.getHours();
+
+                if (diaSemana === 0) {
+                    return false; // Domingo no disponible
+                } else if (diaSemana === 6) {
+                    // Sábado
+                    return hora >= 10 && hora < 16;
+                } else {
+                    // Lunes a Viernes
+                    return hora >= 10 && hora < 18;
+                }
+            }
         });
-    });
-
-    function validarFechaHoraCita(dateTime) {
-        var dayOfWeek = dateTime.getDay();
-        var hours = dateTime.getHours();
-
-        var valid = true;
-        if (dayOfWeek === 0) {
-            valid = false;
-        } else if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-            if (hours < 10 || hours >= 18) {
-                valid = false;
-            }
-        } else if (dayOfWeek === 6) {
-            if (hours < 10 || hours >= 16) {
-                valid = false;
-            }
-        }
-
-        return valid;
-    }
-
-    function validarIntervalo30Minutos(time) {
-        const minutes = parseInt(time.split(':')[1], 10);
-        return minutes === 0 || minutes === 30;
-    }
-
-     // Agregar el event listener para el botón de confirmación
-    document.getElementById('confirmationButton').addEventListener('click', function() {
-        closeConfirmation();
-    });
-
-    // Función para cerrar el mensaje de confirmación
-    function closeConfirmation() {
-        document.getElementById('confirmationOverlay').style.display = 'none';
-    }
-    document.getElementById('modeToggle').addEventListener('change', function() {
-        document.body.classList.toggle('dark-mode');
-    });
-});
-
-
     </script>
 </body>
 </html>
