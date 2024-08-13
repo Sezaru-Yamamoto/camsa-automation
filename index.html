@@ -344,9 +344,6 @@
     var fechaHora = new Date(fechaHoraCita);
     var fecha = fechaHora.toISOString().split('T')[0];
     var hora = fechaHora.toTimeString().split(' ')[0];
-
-    console.log("Fecha: ", fecha);  // Verifica qué se está enviando
-    console.log("Hora: ", hora);    // Verifica qué se está enviando
             
     // Crear un objeto FormData y añadir los datos formateados
     var formData = new FormData(form);
