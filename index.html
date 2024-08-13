@@ -11,15 +11,15 @@
             border-radius: 0;
             color: black;
         }
-        .flatpickr-calendar .day[data-date][style*="background-color: red"] {
-            background-color: red !important;
-            color: white !important;
-        }
-        .flatpickr-calendar .day[data-date][style*="background-color: green"] {
+        .flatpickr-calendar .day.available {
             background-color: green !important;
             color: white !important;
         }
-        
+        .flatpickr-calendar .day.unavailable {
+            background-color: red !important;
+            color: white !important;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f9;
@@ -189,33 +189,30 @@
             flatpickr(fechaCitaInput, {
                 dateFormat: 'Y-m-d',
                 minDate: 'today',
+                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                    const fecha = dayElem.getAttribute('data-date');
+                    if (fecha) {
+                        fetchHorasOcupadas(fecha)
+                        .then(horasOcupadas => {
+                            if (horasOcupadas.length) {
+                                dayElem.classList.add('unavailable');
+                            } else {
+                                dayElem.classList.add('available');
+                            }
+                        });
+                    }
+                },
                 onChange: function(selectedDates) {
                     const fechaSeleccionada = selectedDates[0];
                     if (fechaSeleccionada) {
                         const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
                         actualizarHorasDisponibles(fechaCita);
                     }
-                },
-                onReady: function() {
-                    obtenerFechasOcupadas().then(fechasOcupadas => {
-                        const calendar = document.querySelector('.flatpickr-calendar');
-                        const dias = calendar.querySelectorAll('.day');
-                        dias.forEach(dia => {
-                            const fechaDia = dia.getAttribute('data-date');
-                            if (fechaDia && fechasOcupadas.includes(fechaDia)) {
-                                dia.style.backgroundColor = 'red';
-                                dia.style.color = 'white';
-                            } else if (fechaDia) {
-                                dia.style.backgroundColor = 'green';
-                                dia.style.color = 'white';
-                            }
-                        });
-                    });
                 }
             });
 
-            function obtenerHorasOcupadas(fechaCita) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fechaCita}', 'day'))`;
+            function fetchHorasOcupadas(fecha) {
+                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
 
                 return fetch(url, {
                     headers: {
@@ -224,29 +221,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const horasOcupadas = data.records.map(record => record.fields['Hora']);
-                    return horasOcupadas;
-                });
-            }
-
-            function obtenerFechasOcupadas() {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?view=Grid%20view`;
-                return fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    return data.records.map(record => {
-                        const fecha = record.fields['Fecha'];
-                        return fecha ? new Date(fecha).toISOString().split('T')[0] : null;
-                    }).filter(Boolean);
+                    return data.records.map(record => record.fields['Hora']);
                 });
             }
 
             function actualizarHorasDisponibles(fechaCita) {
-                obtenerHorasOcupadas(fechaCita)
+                fetchHorasOcupadas(fechaCita)
                 .then(horasOcupadas => {
                     horaCitaSelect.innerHTML = '';
                     let startHour, endHour;
