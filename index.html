@@ -276,7 +276,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         function actualizarValoresMinimos() {
             const now = new Date();
-            const offset = -5; // CDMX está en UTC-5
+            const offset = -6; // CDMX está en UTC-6
             const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
 
             // Formatear la fecha y hora en el formato adecuado para los campos
