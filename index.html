@@ -283,13 +283,13 @@
             const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
             const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
 
-            // Establecer el valor mínimo para los campos de fecha y hora
+            // Establecer el valor mínimo para el campo de fecha
             document.getElementById('fecha-cita').setAttribute('min', todayDate);
 
+            // Actualizar la hora mínima dependiendo de la fecha seleccionada
             const fechaCita = document.getElementById('fecha-cita').value;
             const horaCita = document.getElementById('hora-cita');
 
-            // Actualizar la hora mínima dependiendo de la fecha seleccionada
             if (fechaCita === todayDate) {
                 horaCita.setAttribute('min', currentTime);
             } else {
