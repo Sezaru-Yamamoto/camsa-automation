@@ -169,28 +169,37 @@
         const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
         const BASE_ID = 'app0HWHKlb3P6MChm';
         const TABLE_NAME = 'Citas';
-
-        function obtenerHorasOcupadas(fechaCita) {
-    const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({fechaCita}, '${fechaCita}', 'day'))`;
+        
+        //Obtener las horas y las fechas ocupadas
+       function obtenerHorasOcupadas(fechaCita) {
+    const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=IS_SAME({Fecha}, "${fechaCita}", 'day')`;
 
     return fetch(url, {
+        method: 'GET',
         headers: {
-            Authorization: `Bearer ${API_KEY}`
+            Authorization: `Bearer ${API_KEY}`,
+            'Content-Type': 'application/json'
         }
     })
     .then(response => {
+        if (response.status === 422) {
+            return response.json().then(data => {
+                console.error('Error 422:', data);
+                throw new Error('Error con los datos de la solicitud');
+            });
+        }
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('Data fetched:', data); // Agregar para depuración
-        const horasOcupadas = data.records.map(record => record.fields['horaCita']);
+        // Extraer horas ocupadas combinando fecha y hora
+        const horasOcupadas = data.records.map(record => record.fields['Hora']);
         return horasOcupadas;
     })
     .catch(error => {
-        console.error('Error al obtener las horas ocupadas:', error);
+        console.error('Error al obtener horas ocupadas:', error);
     });
 }
         function actualizarHorasDisponibles() {
