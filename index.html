@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Registro de Citas</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -175,34 +177,30 @@
     const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=IS_SAME({Fecha}, "${fechaCita}", 'day')`;
 
     return fetch(url, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (response.status === 422) {
-            return response.json().then(data => {
-                console.error('Error 422:', data);
-                throw new Error('Error con los datos de la solicitud');
-            });
-        }
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Extraer horas ocupadas combinando fecha y hora
-        const horasOcupadas = data.records.map(record => record.fields['Hora']);
-        return horasOcupadas;
-    })
-    .catch(error => {
-        console.error('Error al obtener horas ocupadas:', error);
-    });
-}
+            headers: {
+                Authorization: `Bearer ${API_KEY}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data.records.map(record => record.fields['Fecha']);
+        });
+    }
 
+    function configurarCalendario() {
+        obtenerFechasOcupadas().then(fechasOcupadas => {
+            flatpickr("#fecha-cita", {
+                minDate: "today",
+                disable: fechasOcupadas.map(fecha => new Date(fecha)),
+                onChange: function(selectedDates, dateStr, instance) {
+                    actualizarHorasDisponibles();
+                }
+            });
+        });
+    }
+
+    configurarCalendario();
+});
         //Mostrar en verde y/o rojo, las opciones disponibles.
         function actualizarHorasDisponibles() {
     const fechaCita = document.getElementById('fecha-cita').value;
