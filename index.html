@@ -171,20 +171,28 @@
         const TABLE_NAME = 'Citas';
 
         function obtenerHorasOcupadas(fechaCita) {
-            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({fechaCita}, '${fechaCita}', 'day'))`;
+    const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({fechaCita}, '${fechaCita}', 'day'))`;
 
-            return fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${API_KEY}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const horasOcupadas = data.records.map(record => record.fields['horaCita']);
-                return horasOcupadas;
-            });
+    return fetch(url, {
+        headers: {
+            Authorization: `Bearer ${API_KEY}`
         }
-
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Data fetched:', data); // Agregar para depuración
+        const horasOcupadas = data.records.map(record => record.fields['horaCita']);
+        return horasOcupadas;
+    })
+    .catch(error => {
+        console.error('Error al obtener las horas ocupadas:', error);
+    });
+}
         function actualizarHorasDisponibles() {
     const fechaCita = document.getElementById('fecha-cita').value;
     if (!fechaCita) return;
