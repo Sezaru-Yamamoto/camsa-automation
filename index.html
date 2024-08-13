@@ -315,9 +315,9 @@
         var hora = fechaHora.toISOString().split('T')[1].substring(0, 5); // HH:MM
 
         // Crear un objeto FormData y añadir los datos formateados
-        var formData = new FormData(form);
-        formData.append('fecha', fecha);
-        formData.append('hora', hora);
+        var formData = new FormData();
+formData.append('fecha', '2024-08-28');
+formData.append('hora', '15:00');
 
         fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
             method: 'POST',
