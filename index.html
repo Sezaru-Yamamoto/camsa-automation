@@ -186,37 +186,40 @@
         }
 
         function actualizarHorasDisponibles() {
-            const fechaCita = new Date(document.getElementById('fecha-cita').value).toISOString().split('T')[0];
-            const horaCita = document.getElementById('hora-cita');
-            
-            obtenerHorasOcupadas(fechaCita)
-            .then(horasOcupadas => {
-                horaCita.innerHTML = '';
-                let startHour, endHour;
-                const dayOfWeek = new Date(fechaCita).getDay();
+    const fechaCita = document.getElementById('fecha-cita').value;
+    if (!fechaCita) return;
 
-                if (dayOfWeek === 0) {
-                    horaCita.innerHTML = '<option value="">No disponible</option>';
-                    return;
-                } else if (dayOfWeek === 6) {
-                    startHour = 10;
-                    endHour = 16;
-                } else {
-                    startHour = 10;
-                    endHour = 18;
-                }
+    obtenerHorasOcupadas(fechaCita)
+    .then(horasOcupadas => {
+        const horaCita = document.getElementById('hora-cita');
+        horaCita.innerHTML = ''; // Limpiar opciones anteriores
 
-                for (let hour = startHour; hour < endHour; hour++) {
-                    ['00', '30'].forEach(minute => {
-                        const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
-                        const ocupada = horasOcupadas.includes(hora);
-                        horaCita.innerHTML += `<option value="${hora}" style="background-color:${ocupada ? 'red' : 'green'};">${hora}</option>`;
-                    });
-                }
-            });
-            console.log(data)
+        let startHour, endHour;
+        const dayOfWeek = new Date(fechaCita).getDay();
+
+        if (dayOfWeek === 0) { // Domingo
+            horaCita.innerHTML = '<option value="">No disponible</option>';
+            return;
+        } else if (dayOfWeek === 6) { // Sábado
+            startHour = 10;
+            endHour = 16;
+        } else { // Lunes a Viernes
+            startHour = 10;
+            endHour = 18;
         }
 
+        for (let hour = startHour; hour < endHour; hour++) {
+            ['00', '30'].forEach(minute => {
+                const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
+                const ocupada = horasOcupadas.includes(hora);
+                horaCita.innerHTML += `<option value="${hora}" style="background-color:${ocupada ? 'red' : 'green'};">${hora}</option>`;
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener las horas ocupadas:', error);
+    });
+}
         function actualizarValoresMinimos() {
             const now = new Date();
             const offset = 0; // CDMX está en UTC0
