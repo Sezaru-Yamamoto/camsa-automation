@@ -166,12 +166,12 @@
     document.addEventListener('DOMContentLoaded', function() {
 
         // Reemplaza estos valores con tu información
-        const API_KEY = 'patOfwFQDiPh6QKCs.61ef225df0fb8367515197e5a60a44bf808295581ccce6df0d9570e35d910c51';
-        const BASE_ID = 'tblHf56Z09Lk7gtSS';
-        const TABLE_NAME = 'Citas'; // Cambia esto si tu tabla tiene otro nombre
+        const API_KEY = 'tu_api_key_aqui';
+        const BASE_ID = 'tu_base_id_aqui';
+        const TABLE_NAME = 'Citas';
 
         function obtenerHorasOcupadas(fechaCita) {
-            const url = `https://api.airtable.com/v0/${tblHf56Z09Lk7gtSS}/${Citas}?filterByFormula=AND(IS_SAME({fechaCita}, '${fechaCita}', 'day'))`;
+            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({fechaCita}, '${fechaCita}', 'day'))`;
 
             return fetch(url, {
                 headers: {
@@ -186,14 +186,14 @@
         }
 
         function actualizarHorasDisponibles() {
-            const fechaCita = new Date(document.getElementById('fecha-cita').value);
+            const fechaCita = new Date(document.getElementById('fecha-cita').value).toISOString().split('T')[0];
             const horaCita = document.getElementById('hora-cita');
             
-            obtenerHorasOcupadas(fechaCita.toISOString().split('T')[0])
+            obtenerHorasOcupadas(fechaCita)
             .then(horasOcupadas => {
                 horaCita.innerHTML = '';
                 let startHour, endHour;
-                const dayOfWeek = fechaCita.getDay();
+                const dayOfWeek = new Date(fechaCita).getDay();
 
                 if (dayOfWeek === 0) {
                     horaCita.innerHTML = '<option value="">No disponible</option>';
@@ -214,6 +214,7 @@
                     });
                 }
             });
+            console.log(data)
         }
 
         function actualizarValoresMinimos() {
@@ -291,7 +292,7 @@
             document.getElementById('patientForm').reset();
         });
     });
-</script>
+    </script>
 
     </script>
 </body>
