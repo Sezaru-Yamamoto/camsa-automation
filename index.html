@@ -55,7 +55,7 @@
         .form-container input[type="tel"],
         .form-container input[type="date"],
         .form-container input[type="email"],
-        .form-container input[type="time"],
+        .form-container input[type="datetime-local"],
         .form-container textarea {
             width: calc(100% - 24px);
             padding: 12px;
@@ -74,7 +74,7 @@
         .form-container input[type="tel"]:focus,
         .form-container input[type="date"]:focus,
         .form-container input[type="email"]:focus,
-        .form-container input[type="time"]:focus,
+        .form-container input[type="datetime-local"]:focus,
         .form-container textarea:focus {
             border-color: var(--focus-border-color);
             outline: none;
@@ -232,7 +232,7 @@
     </div>
     
     <div class="form-container">
-        <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.maily.com.mx%2Fmaily&psig=AOvVaw30BvwZkZJ9RZtKTLqHiTPg&ust=1723615649785000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOibqOam8YcDFQAAAAAdAAAAABAR" alt="Logo de la Clínica">
+        <img src="https://via.placeholder.com/120x120?text=Logo" alt="Logo de la Clínica">
         <h2>Registro de Paciente y Cita</h2>
         <form id="patientForm">
             <label for="nombre">Nombre:</label>
@@ -250,14 +250,11 @@
             <label for="correo">Correo Electrónico:</label>
             <input type="email" id="correo" name="correo" required>
 
-            <label for="fecha-cita">Fecha de Cita:</label>
-            <input type="date" id="fecha-cita" name="fecha-cita" required>
+            <label for="fecha-hora-cita">Fecha y Hora de la Cita:</label>
+            <input type="datetime-local" id="fecha-hora-cita" name="fecha-hora-cita" required>
 
-            <label for="hora-cita">Hora de Cita:</label>
-            <input type="time" id="hora-cita" name="hora-cita" required>
-
-            <label for="comentarios">Comentarios:</label>
-            <textarea id="comentarios" name="comentarios" placeholder="Escribe aquí cualquier detalle adicional"></textarea>
+            <label for="motivo-consulta">Motivo de Consulta:</label>
+            <textarea id="motivo-consulta" name="motivo-consulta" required></textarea>
 
             <input type="submit" value="Registrar Cita">
         </form>
@@ -265,79 +262,82 @@
 
     <div class="overlay" id="confirmationOverlay">
         <div class="confirmation-box">
-            <p>¡Tu cita ha sido registrada exitosamente!</p>
-            <button onclick="closeConfirmation()">Aceptar</button>
+            <p>Cita agendada correctamente, enviaremos un mensaje con los detalles al número registrado, ¡Gracias!</p>
+            <button onclick="closeConfirmation()">Ok</button>
         </div>
     </div>
 
     <script>
-    // Toggle Dark Mode
-    const modeToggle = document.getElementById('modeToggle');
-    const body = document.body;
+        function showConfirmation() {
+            document.getElementById('confirmationOverlay').style.display = 'flex';
+        }
 
-    modeToggle.addEventListener('change', () => {
-        body.classList.toggle('dark-mode', modeToggle.checked);
-    });
+        function closeConfirmation() {
+            document.getElementById('confirmationOverlay').style.display = 'none';
+        }
 
-    // Form submission handler
-    const form = document.getElementById('patientForm');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent actual form submission
+        function validarFechaHoraCita(dateTimeInput) {
+            var selectedDate = new Date(dateTimeInput);
 
-        // Extract form values
-        const nombre = document.getElementById('nombre').value;
-        const apellido = document.getElementById('apellido').value;
-        const telefono = document.getElementById('telefono').value;
-        const fechaNacimiento = document.getElementById('fecha-nacimiento').value;
-        const correo = document.getElementById('correo').value;
-        const fechaCita = document.getElementById('fecha-cita').value;
-        const horaCita = document.getElementById('hora-cita').value;
-        const comentarios = document.getElementById('comentarios').value;
+            var dayOfWeek = selectedDate.getDay();
+            var hours = selectedDate.getHours();
 
-        // Combine date and time into one datetime string
-        const fechaHoraCita = `${fechaCita}T${horaCita}`;
-
-        // Prepare data for webhook
-        const data = {
-            nombre,
-            apellido,
-            telefono,
-            fechaNacimiento,
-            correo,
-            fechaHoraCita,
-            comentarios
-        };
-
-        // Define the webhook URL
-        const webhookUrl = 'hhttps://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p';
-
-        // Send data to the webhook using fetch
-        try {
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            var valid = true;
+            if (dayOfWeek === 0) {
+                valid = false;
+            } else if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                if (hours < 10 || hours >= 18) {
+                    valid = false;
+                }
+            } else if (dayOfWeek === 6) {
+                if (hours < 10 || hours >= 16) {
+                    valid = false;
+                }
             }
 
-            // Show confirmation message
-            document.getElementById('confirmationOverlay').style.display = 'flex';
-        } catch (error) {
-            console.error('Error sending data to webhook:', error);
-            alert('Hubo un error al registrar la cita. Por favor, inténtalo de nuevo.');
+            return valid;
         }
-    });
 
-    function closeConfirmation() {
-        document.getElementById('confirmationOverlay').style.display = 'none';
-        form.reset(); // Reset the form fields
-    }
-</script>
+        document.getElementById('patientForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
 
+            var fechaHoraCita = document.getElementById('fecha-hora-cita').value;
+
+            if (!validarFechaHoraCita(fechaHoraCita)) {
+                alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
+                return;
+            }
+
+            // Convertir fecha y hora al formato requerido
+            var fechaHora = new Date(fechaHoraCita);
+            var fecha = fechaHora.toISOString().split('T')[0];
+            var hora = fechaHora.toTimeString().split(' ')[0];
+        
+            // Crear un objeto FormData y añadir los datos formateados
+            var formData = new FormData(form);
+            formData.append('fecha', fecha);
+            formData.append('hora', hora);
+            
+            fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+                method: 'POST',
+                body: new FormData(form)
+            }).then(function(response) {
+                if (response.ok) {
+                    showConfirmation();
+                    form.reset();
+                } else {
+                    console.error('Error en la respuesta del servidor:', response.statusText);
+                }
+            }).catch(function(error) {
+                console.error('Error al enviar el formulario:', error);
+            });
+        });
+
+        // Toggle para modo oscuro
+        document.getElementById('modeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+    </script>
 </body>
 </html>
