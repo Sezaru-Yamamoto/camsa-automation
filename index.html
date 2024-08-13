@@ -274,93 +274,75 @@
 
      <script>
      document.addEventListener('DOMContentLoaded', function() {
-    function generarOpcionesHora(startHour, endHour) {
-        const select = document.getElementById('hora-cita');
-        select.innerHTML = ''; // Limpiar las opciones actuales
-        for (let hour = startHour; hour < endHour; hour++) {
-            for (let minute = 0; minute < 60; minute += 30) {
-                const value = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-                const option = document.createElement('option');
-                option.value = value;
-                option.textContent = value;
-                select.appendChild(option);
-            }
+    function actualizarValoresMinimos() {
+        const now = new Date();
+        const offset = 0; // CDMX está en UTC0
+        const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
+
+        // Formatear la fecha y hora en el formato adecuado para los campos
+        const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
+        const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+
+        // Establecer el valor mínimo para el campo de fecha
+        document.getElementById('fecha-cita').setAttribute('min', todayDate);
+
+        // Actualizar la hora mínima dependiendo de la fecha seleccionada
+        const fechaCita = document.getElementById('fecha-cita').value;
+        const horaCita = document.getElementById('hora-cita');
+
+        if (fechaCita === todayDate) {
+            horaCita.setAttribute('min', currentTime);
+        } else {
+            horaCita.removeAttribute('min');
         }
     }
 
-    function actualizarValoresMinimos() {
-    const now = new Date();
-    const offset = 0; // CDMX está en UTC0
-    const localNow = new Date(now.getTime() + (offset * 60 * 60 * 1000));
+    function actualizarHorasDisponibles() {
+        const fechaCita = new Date(document.getElementById('fecha-cita').value);
+        const horaCita = document.getElementById('hora-cita');
 
-    // Formatear la fecha y hora en el formato adecuado para los campos
-    const todayDate = localNow.toISOString().split('T')[0]; // YYYY-MM-DD
-    const currentTime = localNow.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+        // Limpiar las opciones actuales
+        horaCita.innerHTML = '';
 
-    // Establecer el valor mínimo para el campo de fecha
-    document.getElementById('fecha-cita').setAttribute('min', todayDate);
-
-    // Actualizar la hora mínima dependiendo de la fecha seleccionada
-    const fechaCita = document.getElementById('fecha-cita').value;
-    const horaCita = document.getElementById('hora-cita');
-
-    if (fechaCita === todayDate) {
-        horaCita.setAttribute('min', currentTime);
-    } else {
-        horaCita.removeAttribute('min');
-    }
-}
-
-
-  document.getElementById('fecha-cita').addEventListener('change', function() {
-    const fechaCita = new Date(this.value);
-    const dayOfWeek = fechaCita.getDay();
-    const horaCita = document.getElementById('hora-cita');
-    
-    // Limpiar opciones de hora
-    horaCita.innerHTML = '';
-
-    let startHour, endHour;
-    switch (dayOfWeek) {
-        case 0: // Domingo
-            return; // No permitir seleccionar fechas en domingos
-        case 6: // Sábado
+        // Definir horarios disponibles
+        let startHour, endHour;
+        const dayOfWeek = fechaCita.getDay();
+        
+        if (dayOfWeek === 0) {
+            // Domingo, no disponible
+            horaCita.innerHTML = '<option value="">No disponible</option>';
+            return;
+        } else if (dayOfWeek === 6) {
+            // Sábado
             startHour = 10;
             endHour = 16;
-            break;
-        default: // Lunes a Viernes
+        } else {
+            // Lunes a Viernes
             startHour = 10;
             endHour = 18;
-            break;
+        }
+
+        for (let hour = startHour; hour < endHour; hour++) {
+            // Añadir opciones para cada 30 minutos
+            horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:00">${hour}:00</option>`;
+            horaCita.innerHTML += `<option value="${hour.toString().padStart(2, '0')}:30">${hour}:30</option>`;
+        }
     }
 
-    // Agregar las opciones de hora en intervalos de 30 minutos
-    for (let hour = startHour; hour < endHour; hour++) {
-        const option1 = document.createElement('option');
-        const option2 = document.createElement('option');
-        
-        option1.value = option2.value = `${hour.toString().padStart(2, '0')}:00`;
-        option1.textContent = option2.textContent = `${hour.toString().padStart(2, '0')}:00`;
+    // Inicializar los valores mínimos cuando se carga la página
+    actualizarValoresMinimos();
 
-        const option30 = document.createElement('option');
-        option30.value = `${hour.toString().padStart(2, '0')}:30`;
-        option30.textContent = `${hour.toString().padStart(2, '0')}:30`;
-
-        horaCita.appendChild(option1);
-        horaCita.appendChild(option30);
-    }
-});
-
-
+    // Actualizar hora mínima cuando cambie la fecha
     document.getElementById('fecha-cita').addEventListener('change', function() {
         actualizarValoresMinimos();
-        actualizarOpcionesHora();
+        actualizarHorasDisponibles();
     });
 
     document.getElementById('patientForm').addEventListener('submit', function(event) {
         event.preventDefault();
         var form = event.target;
 
+        // Recoger datos del formulario
         var nombre = document.getElementById('nombre').value;
         var apellido = document.getElementById('apellido').value;
         var telefono = document.getElementById('telefono').value;
@@ -370,17 +352,20 @@
         var horaCita = document.getElementById('hora-cita').value;
         var motivoConsulta = document.getElementById('motivo-consulta').value;
 
+        // Validar que la hora esté en intervalos de 30 minutos
         if (!validarIntervalo30Minutos(horaCita)) {
             alert("Por favor, selecciona una hora en intervalos de 30 minutos.");
             return;
         }
 
+        // Validar fecha y hora
         var fechaHoraCita = new Date(fechaCita + 'T' + horaCita);
         if (!validarFechaHoraCita(fechaHoraCita)) {
             alert("Por favor, selecciona una fecha y hora válida. El horario es:\n- Lunes a Viernes: 10:00 - 18:00\n- Sábado: 10:00 - 16:00\n- Domingo: No disponible");
             return;
         }
 
+        // Crear un objeto FormData y añadir los datos
         var formData = new FormData();
         formData.append('nombre', nombre);
         formData.append('apellido', apellido);
@@ -391,6 +376,7 @@
         formData.append('hora-cita', horaCita);
         formData.append('motivo-consulta', motivoConsulta);
 
+        // Enviar datos a la webhook de Make
         fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
             method: 'POST',
             body: formData
@@ -426,6 +412,11 @@
         return valid;
     }
 
+    function validarIntervalo30Minutos(time) {
+        const minutes = parseInt(time.split(':')[1], 10);
+        return minutes === 0 || minutes === 30;
+    }
+
     function showConfirmation() {
         document.getElementById('confirmationOverlay').style.display = 'flex';
     }
@@ -438,6 +429,7 @@
         document.body.classList.toggle('dark-mode');
     });
 });
+
 
     </script>
 </body>
