@@ -311,7 +311,7 @@
 
         // Convertir fecha y hora al formato requerido
         var fechaHora = new Date(fechaHoraCita);
-        var fecha = fechaHora.toISOString().split('T')[0];
+        var fecha = fechaHora.toISOString().split('T')[0]; // YYYY-MM-DD
         var hora = fechaHora.toISOString().split('T')[1].substring(0, 5); // HH:MM
 
         // Crear un objeto FormData y añadir los datos formateados
@@ -339,6 +339,7 @@
         document.body.classList.toggle('dark-mode');
     });
 </script>
+
 
 
 </body>
