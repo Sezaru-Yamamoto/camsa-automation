@@ -47,30 +47,27 @@
         <p id="message"></p>
     </div>
 
-    <script>
-        document.getElementById('confirmYes').addEventListener('click', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-            const webhookUrl = `https://hook.us1.make.com/yb9xfjtskm2xifyp7zzd21bi2kr25c7d?id=${id}`;
+ <script>
+    document.getElementById('confirmYes').addEventListener('click', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const webhookUrl = `https://hook.us1.make.com/your-webhook-url?id=${id}`;
 
-            fetch(webhookUrl, {
-                method: 'POST',
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.close(); // Intenta cerrar la ventana
-                } else {
-                    document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
-                }
-            })
-            .catch(() => {
-                document.getElementById('message').innerText = 'No se pudo conectar con el servidor para cancelar la cita. Inténtelo de nuevo más tarde.';
-            });
+        fetch(webhookUrl, {
+            method: 'POST',
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = 'https://www.tusitio.com/cancelacion_exitosa.html';
+            } else {
+                document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
+            }
+        })
+        .catch(() => {
+            document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
         });
+    });
+</script>
 
-        document.getElementById('confirmNo').addEventListener('click', function() {
-            window.location.href = 'mailto:tu-email@tudominio.com'; // Redirige al correo o a una página de tu elección
-        });
-    </script>
 </body>
 </html>
