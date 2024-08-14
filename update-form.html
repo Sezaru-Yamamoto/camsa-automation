@@ -173,7 +173,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
- <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
             const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base de datos
@@ -209,20 +209,70 @@
                 const pacienteFields = pacienteData.fields;
                 const citaFields = citaData.fields;
 
+                // Rellenar campos del formulario con datos del paciente
                 document.getElementById('nombre').value = pacienteFields['Nombre'] || '';
                 document.getElementById('apellido').value = pacienteFields['Apellido'] || '';
                 document.getElementById('telefono').value = pacienteFields['Teléfono'] || '';
                 document.getElementById('fecha-nacimiento').value = pacienteFields['Fecha de Nacimiento'] || '';
                 document.getElementById('correo').value = pacienteFields['Correo'] || '';
 
-                // Configura flatpickr
+                // Configura flatpickr para la fecha de la cita
                 flatpickr(document.getElementById('fecha-cita'), {
                     dateFormat: 'Y-m-d',
                     minDate: 'today',
                     defaultDate: citaFields['Fecha'] || ''
                 });
 
-               function fetchHorasOcupadas(fecha) { const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`; return fetch(url, { headers: { Authorization: `Bearer ${API_KEY}` } }) .then(response => response.json()) .then(result => result.records.map(record => record.fields['Hora'])); } function actualizarHorasDisponibles(fecha) { fetchHorasOcupadas(fecha) .then(horasOcupadas => { horaCitaSelect.innerHTML = ''; const horarios = [ '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00' ]; horarios.forEach(horario => { const option = document.createElement('option'); option.value = horario; option.textContent = horario; if (horasOcupadas.includes(horario)) { option.disabled = true; option.style.backgroundColor = 'red'; } else { option.style.backgroundColor = 'green'; } horaCitaSelect.appendChild(option); }); }) .catch(error => console.error(error)); }
+                // Actualiza horas disponibles
+                actualizarHorasDisponibles(citaFields['Fecha'] || '');
+
+                // Rellenar campo de motivo de la cita
+                document.getElementById('motivo-consulta').value = citaFields['Motivo'] || '';
+
+                // Rellenar campo de hora de la cita
+                document.getElementById('hora-cita').value = citaFields['Hora'] || '';
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+            function fetchHorasOcupadas(fecha) {
+                const url = `https://api.airtable.com/v0/${BASE_ID}/${CITAS_TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
+                return fetch(url, {
+                    headers: {
+                        Authorization: `Bearer ${API_KEY}`
+                    }
+                })
+                .then(response => response.json())
+                .then(result => result.records.map(record => record.fields['Hora']));
+            }
+
+            function actualizarHorasDisponibles(fecha) {
+                const horaCitaSelect = document.getElementById('hora-cita');
+
+                fetchHorasOcupadas(fecha)
+                .then(horasOcupadas => {
+                    horaCitaSelect.innerHTML = '';
+                    const horarios = [
+                        '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+                        '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00'
+                    ];
+
+                    horarios.forEach(horario => {
+                        const option = document.createElement('option');
+                        option.value = horario;
+                        option.textContent = horario;
+
+                        if (horasOcupadas.includes(horario)) {
+                            option.disabled = true;
+                            option.style.backgroundColor = 'red';
+                        } else {
+                            option.style.backgroundColor = 'green';
+                        }
+
+                        horaCitaSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching occupied hours:', error));
+            }
 
             document.getElementById('updateForm').addEventListener('submit', function(event) {
                 event.preventDefault();
