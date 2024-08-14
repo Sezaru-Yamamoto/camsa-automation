@@ -51,14 +51,14 @@
     document.getElementById('confirmYes').addEventListener('click', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
-        const webhookUrl = `https://hook.us1.make.com/your-webhook-url?id=${id}`;
+        const webhookUrl = `https://hook.us1.make.com/yb9xfjtskm2xifyp7zzd21bi2kr25c7d?id=${id}`;
 
         fetch(webhookUrl, {
             method: 'POST',
         })
         .then(response => {
             if (response.ok) {
-                window.location.href = 'https://www.tusitio.com/cancelacion_exitosa.html';
+                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/appointment-canceled.html';
             } else {
                 document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
             }
