@@ -168,8 +168,6 @@
             <label for="motivo-consulta">Motivo de Consulta:</label>
             <textarea id="motivo-consulta" name="motivo-consulta" required></textarea>
 
-            <input type="submit" value="Registrar Cita">
-            <button id="cambiarCita" type="button">Cambiar Cita</button>
         </form>
     </div>
 
@@ -294,7 +292,6 @@
             const form = document.getElementById('patientForm');
             const confirmationOverlay = document.getElementById('confirmationOverlay');
             const confirmationButton = document.getElementById('confirmationButton');
-            const cambiarCitaButton = document.getElementById('cambiarCita');
 
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -315,14 +312,6 @@
                 confirmationOverlay.style.display = 'none';
                 form.reset();
                 horaCitaSelect.innerHTML = '';
-            });
-
-            cambiarCitaButton.addEventListener('click', function() {
-                if (idPaciente && idCita) {
-                    window.location.href = `https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p?idPaciente=${idPaciente}&idCita=${idCita}`;
-                } else {
-                    alert('No se puede cambiar la cita. Los IDs de paciente y cita no están disponibles.');
-                }
             });
 
             function enviarDatosFormulario() {
