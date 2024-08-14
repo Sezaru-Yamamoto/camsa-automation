@@ -5,54 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Dashboard</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
-        .login-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-        }
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-        .login-container input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .login-container input[type="submit"]:hover {
-            background-color: #555;
-        }
-        .error-message {
-            color: red;
-            text-align: center;
-            margin-top: 10px;
-        }
+        /* Estilos */
     </style>
 </head>
 <body>
@@ -67,17 +20,24 @@
     </div>
 
     <script>
-        const correctUsername = 'camsadmin';
-        const correctPassword = '@1cambron$';
-
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (username === correctUsername && password === correctPassword) {
+            const response = await fetch('https://hook.us1.make.com/your-webhook-id', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+
+            if (result.authenticated) {
                 sessionStorage.setItem('authenticated', 'true');
-                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/dashboard.html';
+                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html';
             } else {
                 document.getElementById('errorMessage').style.display = 'block';
             }
