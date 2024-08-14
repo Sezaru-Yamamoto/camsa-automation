@@ -183,78 +183,39 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
-            const BASE_ID = 'app0HWHKlb3P6MChm';
-            const TABLE_CITAS = 'Citas';
-            const TABLE_PACIENTES = 'Pacientes';
+            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
+            const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base
+            const TABLE_NAME_CITAS = 'Citas';
+            const TABLE_NAME_PACIENTES = 'Pacientes';
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const idPaciente = urlParams.get('idPaciente');
+            const idCita = urlParams.get('idCita');
+
+            if (idPaciente && idCita) {
+                // Cargar datos del paciente y la cita
+                Promise.all([
+                    fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_PACIENTES}/${idPaciente}`, {
+                        headers: { Authorization: `Bearer ${API_KEY}` }
+                    }).then(response => response.json()),
+                    fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_CITAS}/${idCita}`, {
+                        headers: { Authorization: `Bearer ${API_KEY}` }
+                    }).then(response => response.json())
+                ])
+                .then(([pacienteData, citaData]) => {
+                    document.getElementById('nombre').value = pacienteData.fields.Nombre || '';
+                    document.getElementById('apellido').value = pacienteData.fields.Apellido || '';
+                    document.getElementById('telefono').value = pacienteData.fields.Telefono || '';
+                    document.getElementById('fecha-nacimiento').value = pacienteData.fields['Fecha de Nacimiento'] || '';
+                    document.getElementById('correo').value = pacienteData.fields.Correo || '';
+                    document.getElementById('fecha-cita').value = citaData.fields.Fecha || '';
+                    // Aquí también debes actualizar el select de horas como antes, si es necesario
+                })
+                .catch(error => console.error('Error cargando datos:', error));
+            }
 
             const fechaCitaInput = document.getElementById('fecha-cita');
             const horaCitaSelect = document.getElementById('hora-cita');
-            const form = document.getElementById('patientForm');
-            const confirmationOverlay = document.getElementById('confirmationOverlay');
-            const confirmationButton = document.getElementById('confirmationButton');
-
-            function getQueryParams() {
-                const params = new URLSearchParams(window.location.search);
-                return {
-                    idPaciente: params.get('idPaciente'),
-                    idCita: params.get('idCita')
-                };
-            }
-
-            function fetchPaciente(idPaciente) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_PACIENTES}/${idPaciente}`;
-                return fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`
-                    }
-                }).then(response => response.json());
-            }
-
-            function fetchCita(idCita) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_CITAS}/${idCita}`;
-                return fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`
-                    }
-                }).then(response => response.json());
-            }
-
-            function fillFormWithPacienteData(data) {
-                document.getElementById('nombre').value = data.fields.Nombre || '';
-                document.getElementById('apellido').value = data.fields.Apellido || '';
-                document.getElementById('telefono').value = data.fields.Telefono || '';
-                document.getElementById('fecha-nacimiento').value = data.fields['Fecha de Nacimiento'] || '';
-                document.getElementById('correo').value = data.fields.Correo || '';
-            }
-
-            function fillFormWithCitaData(data) {
-                document.getElementById('fecha-cita').value = data.fields.Fecha || '';
-                const horaCita = data.fields.Hora || '';
-                fetchHorasDisponibles(data.fields.Fecha)
-                .then(() => {
-                    const options = horaCitaSelect.querySelectorAll('option');
-                    options.forEach(option => {
-                        if (option.value === horaCita) {
-                            option.selected = true;
-                        }
-                    });
-                });
-            }
-
-            function getPacienteAndCita() {
-                const { idPaciente, idCita } = getQueryParams();
-                if (idPaciente && idCita) {
-                    Promise.all([fetchPaciente(idPaciente), fetchCita(idCita)])
-                        .then(([pacienteData, citaData]) => {
-                            fillFormWithPacienteData(pacienteData);
-                            fillFormWithCitaData(citaData);
-                        })
-                        .catch(error => {
-                            console.error('Error al obtener datos:', error);
-                        });
-                }
-            }
 
             flatpickr(fechaCitaInput, {
                 dateFormat: 'Y-m-d',
@@ -269,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             function fetchHorasOcupadas(fecha) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_CITAS}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
+                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_CITAS}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
 
                 return fetch(url, {
                     headers: {
@@ -291,13 +252,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     const now = new Date();
                     const selectedDate = new Date(fechaCita);
 
+                    // Define los rangos de horas según el día de la semana
                     if (selectedDate.getDay() === 0) {
+                        // Domingo no disponible
                         horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
                         return;
                     } else if (selectedDate.getDay() === 6) {
+                        // Sábado
                         startHour = 10;
                         endHour = 16;
                     } else {
+                        // Lunes a Viernes
                         startHour = 10;
                         endHour = 18;
                     }
@@ -311,6 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             option.value = hora;
                             option.textContent = hora;
 
+                            // Deshabilita horas ocupadas y horas pasadas si es hoy
                             if (ocupada || 
                                 (fechaCita === now.toISOString().split('T')[0] &&
                                  (hour < now.getHours() || 
@@ -323,6 +289,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+
+            const form = document.getElementById('patientForm');
+            const confirmationOverlay = document.getElementById('confirmationOverlay');
+            const confirmationButton = document.getElementById('confirmationButton');
+            const cambiarCitaButton = document.getElementById('cambiarCita');
 
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -339,26 +310,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-    confirmationButton.addEventListener('click', function() {
-        confirmationOverlay.style.display = 'none';
-        form.reset();
-        horaCitaSelect.innerHTML = '';
-    });
+            confirmationButton.addEventListener('click', function() {
+                confirmationOverlay.style.display = 'none';
+                form.reset();
+                horaCitaSelect.innerHTML = '';
+            });
 
-    function enviarDatosFormulario() {
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+            cambiarCitaButton.addEventListener('click', function() {
+                if (idPaciente && idCita) {
+                    window.location.href = `https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p?idPaciente=${idPaciente}&idCita=${idCita}`;
+                } else {
+                    alert('No se puede cambiar la cita. Los IDs de paciente y cita no están disponibles.');
+                }
+            });
 
-        return fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            function enviarDatosFormulario() {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                return fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+            }
         });
-    }
-});
-
     </script>
 </body>
 </html>
