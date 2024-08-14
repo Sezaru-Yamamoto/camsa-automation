@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Cancelación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .confirmation-box {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .confirmation-box button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        .confirmation-box button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-box">
+        <p>¿Seguro que desea cancelar la cita?</p>
+        <button id="confirmYes">Sí, cancelar</button>
+        <button id="confirmNo">No, volver</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('confirmYes').addEventListener('click', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const webhookUrl = `https://hook.us1.make.com/yb9xfjtskm2xifyp7zzd21bi2kr25c7d?id=${id}`;
+
+            fetch(webhookUrl, {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('message').innerText = 'La cita se ha cancelado correctamente.';
+                } else {
+                    document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
+                }
+            })
+            .catch(() => {
+                document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
+            });
+        });
+
+        document.getElementById('confirmNo').addEventListener('click', function() {
+            window.location.href = 'mailto:?subject=Cita Cancelada&body=La cancelación ha sido cancelada.';
+        });
+    </script>
+</body>
+</html>
