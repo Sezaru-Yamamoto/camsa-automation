@@ -63,33 +63,24 @@
             <input type="password" id="password" placeholder="Contraseña" required>
             <input type="submit" value="Acceder">
         </form>
-        <div id="errorMessage" class="error-message"></div>
+        <div id="errorMessage" class="error-message" style="display: none;">Credenciales incorrectas, intente nuevamente.</div>
     </div>
 
     <script>
+        const correctUsername = 'camsadmin';
+        const correctPassword = '@1cambron$';
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            
-            const correctUsername = 'camsadmin';
-            const correctPassword = '@1cambron$';
-            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
             if (username === correctUsername && password === correctPassword) {
-                // Si las credenciales son correctas, guardar en localStorage y redirigir
-                localStorage.setItem('loggedIn', true);
-                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html'; // Aquí se coloca la ruta al dashboard
+                window.location.href = 'dashboard.html';
             } else {
-                // Si las credenciales son incorrectas, mostrar mensaje de error
-                document.getElementById('errorMessage').textContent = 'Credenciales incorrectas, intente nuevamente.';
+                document.getElementById('errorMessage').style.display = 'block';
             }
         });
-
-        // Verificar si ya está logueado
-        if (localStorage.getItem('loggedIn') === 'true') {
-            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html'; // Redirigir si ya ha iniciado sesión
-        }
     </script>
 </body>
 </html>
