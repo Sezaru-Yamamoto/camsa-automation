@@ -182,112 +182,133 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Asegúrate de usar el token correcto
-            const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
-            const TABLE_NAME = 'Citas';
+       document.addEventListener('DOMContentLoaded', function() {
+    const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Asegúrate de usar el token correcto
+    const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
+    const TABLE_NAME = 'Citas';
 
-            const fechaCitaInput = document.getElementById('fecha-cita');
-            const horaCitaSelect = document.getElementById('hora-cita');
+    const fechaCitaInput = document.getElementById('fecha-cita');
+    const horaCitaSelect = document.getElementById('hora-cita');
 
-            flatpickr(fechaCitaInput, {
-                dateFormat: 'Y-m-d',
-                minDate: 'today',
-                onDayCreate: function(dObj, dStr, fp, dayElem) {
-                    const fecha = dayElem.getAttribute('data-date');
-                    if (fecha) {
-                        fetchHorasOcupadas(fecha)
-                        .then(horasOcupadas => {
-                            if (horasOcupadas.length) {
-                                dayElem.classList.add('unavailable');
-                            } else {
-                                dayElem.classList.add('available');
-                            }
-                        });
-                    }
-                },
-                onChange: function(selectedDates) {
-                    const fechaSeleccionada = selectedDates[0];
-                    if (fechaSeleccionada) {
-                        const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
-                        actualizarHorasDisponibles(fechaCita);
-                    }
-                }
-            });
-
-            function fetchHorasOcupadas(fecha) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
-
-                return fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    return data.records.map(record => record.fields['Hora']);
-                });
-            }
-
-            function actualizarHorasDisponibles(fechaCita) {
-                fetchHorasOcupadas(fechaCita)
+    flatpickr(fechaCitaInput, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today',
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            const fecha = dayElem.getAttribute('data-date');
+            if (fecha) {
+                fetchHorasOcupadas(fecha)
                 .then(horasOcupadas => {
-                    horaCitaSelect.innerHTML = '';
-                    let startHour, endHour;
-                    const dayOfWeek = new Date(fechaCita).getDay();
-
-                    if (dayOfWeek === 0) {
-                        horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
-                        return;
-                    } else if (dayOfWeek === 6) {
-                        startHour = 10;
-                        endHour = 16;
+                    if (horasOcupadas.length) {
+                        dayElem.classList.add('unavailable');
                     } else {
-                        startHour = 10;
-                        endHour = 18;
-                    }
-
-                    for (let hour = startHour; hour <= endHour; hour++) {
-                        const time1 = `${hour.toString().padStart(2, '0')}:00`;
-                        const time2 = `${hour.toString().padStart(2, '0')}:30`;
-
-                        const option1 = document.createElement('option');
-                        option1.value = time1;
-                        option1.textContent = time1;
-                        if (horasOcupadas.includes(time1)) {
-                            option1.disabled = true;
-                        }
-
-                        const option2 = document.createElement('option');
-                        option2.value = time2;
-                        option2.textContent = time2;
-                        if (horasOcupadas.includes(time2)) {
-                            option2.disabled = true;
-                        }
-
-                        horaCitaSelect.appendChild(option1);
-                        horaCitaSelect.appendChild(option2);
+                        dayElem.classList.add('available');
                     }
                 });
             }
+        },
+        onChange: function(selectedDates) {
+            const fechaSeleccionada = selectedDates[0];
+            if (fechaSeleccionada) {
+                const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
+                actualizarHorasDisponibles(fechaCita);
+            }
+        }
+    });
 
-            const form = document.getElementById('patientForm');
-            const confirmationOverlay = document.getElementById('confirmationOverlay');
-            const confirmationButton = document.getElementById('confirmationButton');
+    function fetchHorasOcupadas(fecha) {
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
 
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                // Envía los datos del formulario a Make y Airtable aquí (no detallado en este código).
-                confirmationOverlay.style.display = 'flex';
-            });
-
-            confirmationButton.addEventListener('click', function() {
-                confirmationOverlay.style.display = 'none';
-                form.reset();
-                // Resetea las opciones de hora si es necesario.
-                horaCitaSelect.innerHTML = '';
-            });
+        return fetch(url, {
+            headers: {
+                Authorization: `Bearer ${API_KEY}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data.records.map(record => record.fields['Hora']);
         });
+    }
+
+    function actualizarHorasDisponibles(fechaCita) {
+        fetchHorasOcupadas(fechaCita)
+        .then(horasOcupadas => {
+            horaCitaSelect.innerHTML = '';
+            let startHour, endHour;
+            const dayOfWeek = new Date(fechaCita).getDay();
+
+            if (dayOfWeek === 0) {
+                horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
+                return;
+            } else if (dayOfWeek === 6) {
+                startHour = 10;
+                endHour = 16;
+            } else {
+                startHour = 10;
+                endHour = 18;
+            }
+
+            for (let hour = startHour; hour <= endHour; hour++) {
+                const time1 = `${hour.toString().padStart(2, '0')}:00`;
+                const time2 = `${hour.toString().padStart(2, '0')}:30`;
+
+                const option1 = document.createElement('option');
+                option1.value = time1;
+                option1.textContent = time1;
+                if (horasOcupadas.includes(time1)) {
+                    option1.disabled = true;
+                }
+
+                const option2 = document.createElement('option');
+                option2.value = time2;
+                option2.textContent = time2;
+                if (horasOcupadas.includes(time2)) {
+                    option2.disabled = true;
+                }
+
+                horaCitaSelect.appendChild(option1);
+                horaCitaSelect.appendChild(option2);
+            }
+        });
+    }
+
+    const form = document.getElementById('patientForm');
+    const confirmationOverlay = document.getElementById('confirmationOverlay');
+    const confirmationButton = document.getElementById('confirmationButton');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        enviarDatosFormulario()
+        .then(response => {
+            if (response.ok) {
+                confirmationOverlay.style.display = 'flex';
+            } else {
+                alert('No se logró concretar la cita. Por favor, inténtelo nuevamente.');
+            }
+        })
+        .catch(error => {
+            alert('Error en la comunicación. Por favor, inténtelo nuevamente.');
+        });
+    });
+
+    confirmationButton.addEventListener('click', function() {
+        confirmationOverlay.style.display = 'none';
+        form.reset();
+        horaCitaSelect.innerHTML = '';
+    });
+
+    function enviarDatosFormulario() {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        return fetch('URL_DE_TU_WEBHOOK_DE_MAKE', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+    }
+});
     </script>
 </body>
 </html>
