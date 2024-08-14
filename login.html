@@ -76,6 +76,7 @@
             const password = document.getElementById('password').value;
 
             if (username === correctUsername && password === correctPassword) {
+                sessionStorage.setItem('authenticated', 'true');
                 window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html';
             } else {
                 document.getElementById('errorMessage').style.display = 'block';
