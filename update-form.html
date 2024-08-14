@@ -222,63 +222,7 @@
                     defaultDate: citaFields['Fecha'] || ''
                 });
 
-                // Actualiza las horas disponibles
-                actualizarHorasDisponibles(citaFields['Fecha']);
-
-                document.getElementById('hora-cita').value = citaFields['Hora'] || '';
-                document.getElementById('motivo-consulta').value = citaFields['Motivo de Consulta'] || '';
-            })
-            .catch(error => console.error('Error fetching data:', error));
-
-            function actualizarHorasDisponibles(fechaCita) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${CITAS_TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fechaCita}', 'day'))`;
-                fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const horasOcupadas = data.records.map(record => record.fields['Hora']);
-                    const horaCitaSelect = document.getElementById('hora-cita');
-                    horaCitaSelect.innerHTML = '';
-
-                    let startHour, endHour;
-                    const now = new Date();
-                    const selectedDate = new Date(fechaCita);
-
-                    if (selectedDate.getDay() === 0) {
-                        horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
-                        return;
-                    } else if (selectedDate.getDay() === 6) {
-                        startHour = 10;
-                        endHour = 16;
-                    } else {
-                        startHour = 10;
-                        endHour = 18;
-                    }
-
-                    for (let hour = startHour; hour < endHour; hour++) {
-                        ['00', '30'].forEach(minute => {
-                            const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
-                            const ocupada = horasOcupadas.includes(hora);
-
-                            const option = document.createElement('option');
-                            option.value = hora;
-                            option.textContent = hora;
-
-                            if (ocupada || 
-                                (fechaCita === now.toISOString().split('T')[0] &&
-                                 (hour < now.getHours() || 
-                                  (hour === now.getHours() && parseInt(minute) <= now.getMinutes())))) {
-                                option.disabled = true;
-                            }
-
-                            horaCitaSelect.appendChild(option);
-                        });
-                    }
-                });
-            }
+               function fetchHorasOcupadas(fecha) { const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`; return fetch(url, { headers: { Authorization: `Bearer ${API_KEY}` } }) .then(response => response.json()) .then(result => result.records.map(record => record.fields['Hora'])); } function actualizarHorasDisponibles(fecha) { fetchHorasOcupadas(fecha) .then(horasOcupadas => { horaCitaSelect.innerHTML = ''; const horarios = [ '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00' ]; horarios.forEach(horario => { const option = document.createElement('option'); option.value = horario; option.textContent = horario; if (horasOcupadas.includes(horario)) { option.disabled = true; option.style.backgroundColor = 'red'; } else { option.style.backgroundColor = 'green'; } horaCitaSelect.appendChild(option); }); }) .catch(error => console.error(error)); }
 
             document.getElementById('updateForm').addEventListener('submit', function(event) {
                 event.preventDefault();
