@@ -183,6 +183,8 @@
         </div>
     </div>
 
+     <button id="logoutButton">Cerrar Sesión</button>
+
     <script>
         const menuItems = document.querySelectorAll('.sidebar ul li');
         const sections = document.querySelectorAll('.section');
@@ -199,13 +201,17 @@
             });
         });
 
-      // Verificar autenticación en la carga de la página
+         // Verificar autenticación en la carga de la página
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar si el usuario está autenticado
             if (sessionStorage.getItem('authenticated') !== 'true') {
-                // Redirigir al login si no está autenticado
                 window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
             }
+        });
+
+        // Funcionalidad para cerrar sesión
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            sessionStorage.removeItem('authenticated');
+            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
         });
     </script>
 </body>
