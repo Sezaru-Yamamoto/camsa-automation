@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+e<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -203,6 +203,8 @@
     if (sessionStorage.getItem('authenticated') !== 'true') {
         alert("Debe iniciar sesión primero.");
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login'; // Redirige al login si no está autenticado
+    } else {
+        window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html';
     }
     </script>
 </body>
