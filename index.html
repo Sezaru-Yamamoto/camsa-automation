@@ -182,7 +182,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-       document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function() {
     const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Asegúrate de usar el token correcto
     const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
     const TABLE_NAME = 'Citas';
@@ -247,26 +247,24 @@
                 endHour = 18;
             }
 
-            for (let hour = startHour; hour <= endHour; hour++) {
-                const time1 = `${hour.toString().padStart(2, '0')}:00`;
-                const time2 = `${hour.toString().padStart(2, '0')}:30`;
+            const now = new Date();
+            const today = new Date().toISOString().split('T')[0];
 
-                const option1 = document.createElement('option');
-                option1.value = time1;
-                option1.textContent = time1;
-                if (horasOcupadas.includes(time1)) {
-                    option1.disabled = true;
-                }
+            for (let hour = startHour; hour < endHour; hour++) {
+                ['00', '30'].forEach(minute => {
+                    const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
+                    const ocupada = horasOcupadas.includes(hora);
 
-                const option2 = document.createElement('option');
-                option2.value = time2;
-                option2.textContent = time2;
-                if (horasOcupadas.includes(time2)) {
-                    option2.disabled = true;
-                }
+                    const option = document.createElement('option');
+                    option.value = hora;
+                    option.textContent = hora;
 
-                horaCitaSelect.appendChild(option1);
-                horaCitaSelect.appendChild(option2);
+                    if (ocupada || (fechaCita === today && now.getHours() > hour) || (fechaCita === today && now.getHours() === hour && now.getMinutes() >= parseInt(minute))) {
+                        option.disabled = true;
+                    }
+
+                    horaCitaSelect.appendChild(option);
+                });
             }
         });
     }
@@ -309,6 +307,7 @@
         });
     }
 });
+
     </script>
 </body>
 </html>
