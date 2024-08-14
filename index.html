@@ -181,13 +181,14 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_KEY = 'patOfwFQDiPh6QKCs';  // Token de API
             const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base
             const TABLE_NAME_CITAS = 'Citas';
             const TABLE_NAME_PACIENTES = 'Pacientes';
 
+            // Extraer parámetros de la URL
             const urlParams = new URLSearchParams(window.location.search);
             const idPaciente = urlParams.get('idPaciente');
             const idCita = urlParams.get('idCita');
@@ -203,13 +204,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     }).then(response => response.json())
                 ])
                 .then(([pacienteData, citaData]) => {
-                    document.getElementById('nombre').value = pacienteData.fields.Nombre || '';
-                    document.getElementById('apellido').value = pacienteData.fields.Apellido || '';
-                    document.getElementById('telefono').value = pacienteData.fields.Telefono || '';
-                    document.getElementById('fecha-nacimiento').value = pacienteData.fields['Fecha de Nacimiento'] || '';
-                    document.getElementById('correo').value = pacienteData.fields.Correo || '';
-                    document.getElementById('fecha-cita').value = citaData.fields.Fecha || '';
-                    // Aquí también debes actualizar el select de horas como antes, si es necesario
+                    if (pacienteData.fields) {
+                        document.getElementById('nombre').value = pacienteData.fields.Nombre || '';
+                        document.getElementById('apellido').value = pacienteData.fields.Apellido || '';
+                        document.getElementById('telefono').value = pacienteData.fields.Telefono || '';
+                        document.getElementById('fecha-nacimiento').value = pacienteData.fields['Fecha de Nacimiento'] || '';
+                        document.getElementById('correo').value = pacienteData.fields.Correo || '';
+                    }
+
+                    if (citaData.fields) {
+                        document.getElementById('fecha-cita').value = citaData.fields.Fecha || '';
+                        // Aquí también debes actualizar el select de horas como antes, si es necesario
+                    }
                 })
                 .catch(error => console.error('Error cargando datos:', error));
             }
@@ -313,22 +319,23 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmationButton.addEventListener('click', function() {
                 confirmationOverlay.style.display = 'none';
                 form.reset();
-                horaCitaSelect.innerHTML = '';
             });
 
             cambiarCitaButton.addEventListener('click', function() {
                 if (idPaciente && idCita) {
-                    window.location.href = `https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p?idPaciente=${idPaciente}&idCita=${idCita}`;
-                } else {
-                    alert('No se puede cambiar la cita. Los IDs de paciente y cita no están disponibles.');
+                    const url = `https://hook.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p?idPaciente=${idPaciente}&idCita=${idCita}`;
+                    window.location.href = url;
                 }
             });
 
             function enviarDatosFormulario() {
                 const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
 
-                return fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+                return fetch('https://hook.make.com/tu-webhook-url', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
