@@ -156,7 +156,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="overviewData">
                     <!-- Aquí se llenarán los datos -->
                 </tbody>
             </table>
@@ -176,7 +176,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="pacientesData">
                     <!-- Aquí se llenarán los datos -->
                 </tbody>
             </table>
@@ -194,7 +194,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="citasData">
                     <!-- Aquí se llenarán los datos -->
                 </tbody>
             </table>
@@ -213,7 +213,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tratamientosData">
                     <!-- Aquí se llenarán los datos -->
                 </tbody>
             </table>
@@ -231,7 +231,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="historialData">
                     <!-- Aquí se llenarán los datos -->
                 </tbody>
             </table>
@@ -250,6 +250,15 @@
     document.getElementById('logoutButton').addEventListener('click', function() {
         sessionStorage.removeItem('authenticated');
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+    });
+
+    document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+        menuItem.addEventListener('click', function() {
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
+        });
     });
 
     async function fetchData() {
@@ -271,84 +280,62 @@
             fetchTableData('Historial Médico')
         ]);
 
-        // Mostrar datos en Overview
-        const overviewData = document.getElementById('overviewData');
-        overviewData.innerHTML = [...pacientes, ...citas, ...tratamientos, ...historial].map(record => {
-            const fields = record.fields;
+        renderData('pacientesData', pacientes);
+        renderData('citasData', citas);
+        renderData('tratamientosData', tratamientos);
+        renderData('historialData', historial);
+        renderOverviewData(pacientes, citas, tratamientos, historial);
+    }
+
+    function renderData(elementId, data) {
+        const tableBody = document.getElementById(elementId);
+        tableBody.innerHTML = data.map(record => `
+            <tr>
+                <td>${record.fields.Nombre || ''}</td>
+                <td>${record.fields.Apellido || ''}</td>
+                <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
+                <td>${record.fields.Telefono || ''}</td>
+                <td>${record.fields.Correo || ''}</td>
+                <td>
+                    <div class="actions">
+                        <button class="update">Actualizar</button>
+                        <button class="delete" data-id="${record.id}">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderOverviewData(pacientes, citas, tratamientos, historial) {
+        const tableBody = document.getElementById('overviewData');
+        tableBody.innerHTML = pacientes.map(paciente => {
+            const cita = citas.find(c => c.fields.Paciente === paciente.id) || {};
+            const tratamiento = tratamientos.find(t => t.fields.Paciente === paciente.id) || {};
+            const historialMedico = historial.find(h => h.fields.Paciente === paciente.id) || {};
             return `
                 <tr>
-                    <td>${fields.Nombre || ''}</td>
-                    <td>${fields.Apellido || ''}</td>
-                    <td>${fields['Fecha de Nacimiento'] || ''}</td>
-                    <td>${fields.Telefono || ''}</td>
-                    <td>${fields.Correo || ''}</td>
-                    <td>${fields.Hora || ''}</td>
-                    <td>${fields.Fecha || ''}</td>
-                    <td>${fields.Motivo || ''}</td>
-                    <td>${fields.Progreso || ''}</td>
-                    <td>${fields['Fecha de Inicio'] || ''}</td>
-                    <td>${fields.Diagnostico || ''}</td>
-                    <td>${fields['Fecha de Registro'] || ''}</td>
-                    <td class="actions">
-                        <button class="update" onclick="updateRecord('${record.id}')">Actualizar</button>
-                        <button class="delete" onclick="deleteRecord('${record.id}')">Eliminar</button>
+                    <td>${paciente.fields.Nombre || ''}</td>
+                    <td>${paciente.fields.Apellido || ''}</td>
+                    <td>${paciente.fields['Fecha de Nacimiento'] || ''}</td>
+                    <td>${paciente.fields.Telefono || ''}</td>
+                    <td>${paciente.fields.Correo || ''}</td>
+                    <td>${cita.fields.Hora || ''}</td>
+                    <td>${cita.fields.Fecha || ''}</td>
+                    <td>${cita.fields.Motivo || ''}</td>
+                    <td>${tratamiento.fields.Progreso || ''}</td>
+                    <td>${tratamiento.fields['Fecha de Inicio'] || ''}</td>
+                    <td>${historialMedico.fields.Diagnóstico || ''}</td>
+                    <td>${historialMedico.fields['Fecha de Registro'] || ''}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${paciente.id}">Eliminar</button>
+                        </div>
                     </td>
                 </tr>
             `;
         }).join('');
     }
-
-    async function updateRecord(recordId) {
-        // Obtener nuevos datos del usuario para actualizar
-        const updatedFields = prompt("Ingrese los nuevos datos en formato JSON:", "{}");
-        if (!updatedFields) return;
-
-        try {
-            const response = await fetch(`https://api.airtable.com/v0/app0HWHKlb3P6MChm/Pacientes/${recordId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ fields: JSON.parse(updatedFields) })
-            });
-
-            if (response.ok) {
-                alert('Registro actualizado con éxito');
-                fetchData(); // Refrescar los datos
-            } else {
-                alert('Error al actualizar el registro');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al actualizar el registro');
-        }
-    }
-
-    async function deleteRecord(recordId) {
-        const confirmDelete = confirm("¿Está seguro de que desea eliminar este registro?");
-        if (!confirmDelete) return;
-
-        try {
-            const response = await fetch(`https://api.airtable.com/v0/app0HWHKlb3P6MChm/Pacientes/${recordId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7`
-                }
-            });
-
-            if (response.ok) {
-                alert('Registro eliminado con éxito');
-                fetchData(); // Refrescar los datos
-            } else {
-                alert('Error al eliminar el registro');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al eliminar el registro');
-        }
-    }
-</script>
-
+    </script>
 </body>
 </html>
