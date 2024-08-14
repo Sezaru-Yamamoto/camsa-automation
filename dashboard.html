@@ -199,11 +199,14 @@
             });
         });
 
-        // Verifica si el usuario está autenticado
-        if (sessionStorage.getItem('authenticated') !== 'true') {
-            alert("Debe iniciar sesión primero.");
-            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html'; // Redirige al login si no está autenticado
-        }
+      // Verificar autenticación en la carga de la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si el usuario está autenticado
+            if (sessionStorage.getItem('authenticated') !== 'true') {
+                // Redirigir al login si no está autenticado
+                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+            }
+        });
     </script>
 </body>
 </html>
