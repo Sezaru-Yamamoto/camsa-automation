@@ -183,8 +183,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
-    const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base de datos
+    const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7'; // Token de API
+    const BASE_ID = 'app0HWHKlb3P6MChm'; // ID de la base de datos
     const CITAS_TABLE_NAME = 'Citas';
     const PACIENTES_TABLE_NAME = 'Pacientes';
 
@@ -289,28 +289,22 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            showConfirmation();
-        })
-        .catch(error => console.error('Error updating data:', error));
-    });
-
- // Enviar los datos a la webhook de Make
-        fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            // Enviar los datos actualizados a la webhook de Make
+            return fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
         })
         .then(response => response.json())
         .then(data => {
             console.log('Datos enviados a la webhook de Make:', data);
             showConfirmation();
         })
-        .catch(error => console.error('Error al enviar datos a la webhook de Make:', error));
-    })
-    .catch(error => console.error('Error actualizando datos:', error));
-});
+        .catch(error => console.error('Error actualizando datos:', error));
+    });
 
     function showConfirmation() {
         const overlay = document.getElementById('confirmationOverlay');
