@@ -53,20 +53,24 @@
             const id = urlParams.get('id');
             const webhookUrl = `https://hook.us1.make.com/yb9xfjtskm2xifyp7zzd21bi2kr25c7d?id=${id}`;
 
-              fetch(webhookUrl, {
-            method: 'POST',
-        })
-        .then(response => {
-            if (response.ok) {
-                window.close(); // Intenta cerrar la ventana
-            } else {
-                document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
-            }
-        })
-        .catch(() => {
-            document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
+            fetch(webhookUrl, {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.close(); // Intenta cerrar la ventana
+                } else {
+                    document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
+                }
+            })
+            .catch(() => {
+                document.getElementById('message').innerText = 'No se pudo conectar con el servidor para cancelar la cita. Inténtelo de nuevo más tarde.';
+            });
         });
-    });
+
+        document.getElementById('confirmNo').addEventListener('click', function() {
+            window.location.href = 'mailto:tu-email@tudominio.com'; // Redirige al correo o a una página de tu elección
+        });
     </script>
 </body>
 </html>
