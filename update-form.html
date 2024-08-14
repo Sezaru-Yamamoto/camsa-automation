@@ -294,6 +294,24 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error updating data:', error));
     });
 
+ // Enviar los datos a la webhook de Make
+        fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Datos enviados a la webhook de Make:', data);
+            showConfirmation();
+        })
+        .catch(error => console.error('Error al enviar datos a la webhook de Make:', error));
+    })
+    .catch(error => console.error('Error actualizando datos:', error));
+});
+
     function showConfirmation() {
         const overlay = document.getElementById('confirmationOverlay');
         overlay.style.display = 'flex';
