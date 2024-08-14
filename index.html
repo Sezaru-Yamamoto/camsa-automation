@@ -182,7 +182,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+     document.addEventListener('DOMContentLoaded', function() {
     const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Asegúrate de usar el token correcto
     const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
     const TABLE_NAME = 'Citas';
@@ -235,6 +235,8 @@
             horaCitaSelect.innerHTML = '';
             let startHour, endHour;
             const dayOfWeek = new Date(fechaCita).getDay();
+            const now = new Date();
+            const today = new Date().toISOString().split('T')[0];
 
             if (dayOfWeek === 0) {
                 horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
@@ -247,19 +249,18 @@
                 endHour = 18;
             }
 
-            const now = new Date();
-            const today = new Date().toISOString().split('T')[0];
-
             for (let hour = startHour; hour < endHour; hour++) {
                 ['00', '30'].forEach(minute => {
                     const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
                     const ocupada = horasOcupadas.includes(hora);
-
                     const option = document.createElement('option');
                     option.value = hora;
                     option.textContent = hora;
 
-                    if (ocupada || (fechaCita === today && now.getHours() > hour) || (fechaCita === today && now.getHours() === hour && now.getMinutes() >= parseInt(minute))) {
+                    if (ocupada || 
+                        (fechaCita === today && 
+                         (hour < now.getHours() || 
+                          (hour === now.getHours() && parseInt(minute) <= now.getMinutes())))) {
                         option.disabled = true;
                     }
 
@@ -307,6 +308,7 @@
         });
     }
 });
+
 
     </script>
 </body>
