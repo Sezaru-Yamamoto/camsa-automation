@@ -48,6 +48,7 @@
     </div>
 
  <script>
+     //Botón de cancelar, redirige a página de cancelación exitosa.
     document.getElementById('confirmYes').addEventListener('click', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
@@ -67,6 +68,17 @@
             document.getElementById('message').innerText = 'Hubo un problema al cancelar la cita. Inténtelo de nuevo.';
         });
     });
+            //Botón de Volver, cierra la página.
+          document.getElementById('confirmNo').addEventListener('click', function() {
+            window.close(); // Intenta cerrar la ventana o pestaña
+
+            // En caso de que window.close() no funcione, redirige al usuario a la página anterior
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/'; // Redirige a una página específica
+            }
+        });
 </script>
 
 </body>
