@@ -182,7 +182,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-     document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Asegúrate de usar el token correcto
     const BASE_ID = 'app0HWHKlb3P6MChm';  // Asegúrate de usar el ID correcto de tu base de datos
     const TABLE_NAME = 'Citas';
@@ -193,19 +193,6 @@
     flatpickr(fechaCitaInput, {
         dateFormat: 'Y-m-d',
         minDate: 'today',
-        onDayCreate: function(dObj, dStr, fp, dayElem) {
-            const fecha = dayElem.getAttribute('data-date');
-            if (fecha) {
-                fetchHorasOcupadas(fecha)
-                .then(horasOcupadas => {
-                    if (horasOcupadas.length) {
-                        dayElem.classList.add('unavailable');
-                    } else {
-                        dayElem.classList.add('available');
-                    }
-                });
-            }
-        },
         onChange: function(selectedDates) {
             const fechaSeleccionada = selectedDates[0];
             if (fechaSeleccionada) {
@@ -233,18 +220,22 @@
         fetchHorasOcupadas(fechaCita)
         .then(horasOcupadas => {
             horaCitaSelect.innerHTML = '';
-            let startHour, endHour;
-            const dayOfWeek = new Date(fechaCita).getDay();
-            const now = new Date();
-            const today = new Date().toISOString().split('T')[0];
 
-            if (dayOfWeek === 0) {
+            let startHour, endHour;
+            const now = new Date();
+            const selectedDate = new Date(fechaCita);
+
+            // Define los rangos de horas según el día de la semana
+            if (selectedDate.getDay() === 0) {
+                // Domingo no disponible
                 horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
                 return;
-            } else if (dayOfWeek === 6) {
+            } else if (selectedDate.getDay() === 6) {
+                // Sábado
                 startHour = 10;
                 endHour = 16;
             } else {
+                // Lunes a Viernes
                 startHour = 10;
                 endHour = 18;
             }
@@ -253,12 +244,14 @@
                 ['00', '30'].forEach(minute => {
                     const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
                     const ocupada = horasOcupadas.includes(hora);
+
                     const option = document.createElement('option');
                     option.value = hora;
                     option.textContent = hora;
 
+                    // Deshabilita horas ocupadas y horas pasadas si es hoy
                     if (ocupada || 
-                        (fechaCita === today && 
+                        (fechaCita === now.toISOString().split('T')[0] &&
                          (hour < now.getHours() || 
                           (hour === now.getHours() && parseInt(minute) <= now.getMinutes())))) {
                         option.disabled = true;
@@ -308,6 +301,7 @@
         });
     }
 });
+
 
 
     </script>
