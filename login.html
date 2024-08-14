@@ -276,37 +276,3 @@
     </script>
 </body>
 </html>
-', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const result = await response.json();
-
-            if (result.authenticated) {
-                sessionStorage.setItem('authenticated', 'true');
-                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html';
-            } else {
-                document.getElementById('errorMessage').style.display = 'block';
-            }
-        });
-    </script>
-</body>
-</html>
-', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const result = await response.json();
-
-            if (result.authenticated) {
-                sessionStorage.setItem('authenticated', 'true');
-                window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/admin-menu.html';
-            } else {
-                document.getElementById('errorMessage').style.display = 'block';
-            }
-        });
-    </script>
-</body>
-</html>
