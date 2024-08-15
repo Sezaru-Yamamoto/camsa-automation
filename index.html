@@ -242,13 +242,13 @@
                 startHour = 10;
                 endHour = 18;
             }
-
-            console.log(now.getHours);
             
             // Verifica si el horario actual ha pasado el horario de cierre
             if (fechaCita === now.toISOString().split('T')[0]) {
                 // Si es hoy, ajusta la hora de cierre si es después del horario de cierre
                 if (now.getHours() >= endHour) {
+                    const now = new Date();
+                    console.log("Current hour in 24-hour format:", now.getHours()); // Esta línea imprime la hora actual en formato de 24 horas
                     // El horario de hoy ya ha pasado, avanza al siguiente día
                     selectedDate.setDate(selectedDate.getDate() + 1);
                     fechaCita = selectedDate.toISOString().split('T')[0];
