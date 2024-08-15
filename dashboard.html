@@ -173,6 +173,7 @@
                 </tbody>
             </table>
         </div>
+    </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -209,63 +210,66 @@
             return data.records;
         };
 
-        const [pacientes, citas, tratamientos, historial] = await Promise.all([
+        const [pacientes, citas, tratamientos] = await Promise.all([
             fetchTableData('Pacientes'),
             fetchTableData('Citas'),
             fetchTableData('Tratamientos'),
         ]);
 
         renderData('pacientesData', pacientes);
-        renderData('citasData', citas);
-        renderData('tratamientosData', tratamientos);
-        renderOverviewData(pacientes, citas, tratamientos);
+        renderData('citasData', citas, 'cita');
+        renderData('tratamientosData', tratamientos, 'tratamiento');
     }
 
-    function renderData(elementId, data) {
+    function renderData(elementId, data, type) {
         const tableBody = document.getElementById(elementId);
-        tableBody.innerHTML = data.map(record => `
-            <tr>
-                <td>${record.fields.Nombre || ''}</td>
-                <td>${record.fields.Apellido || ''}</td>
-                <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
-                <td>${record.fields.Telefono || ''}</td>
-                <td>${record.fields.Correo || ''}</td>
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${record.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    function renderOverviewData(pacientes, citas, tratamientos, historial) {
-        const tableBody = document.getElementById('overviewData');
-        tableBody.innerHTML = pacientes.map(paciente => {
-            const cita = citas.find(c => c.fields.Paciente === paciente.id) || {};
-            const tratamiento = tratamientos.find(t => t.fields.Paciente === paciente.id) || {};
-            const historialMedico = historial.find(h => h.fields.Paciente === paciente.id) || {};
-            return `
-                <tr>
-                    <td>${paciente.fields.Nombre || ''}</td>
-                    <td>${paciente.fields.Apellido || ''}</td>
-                    <td>${paciente.fields['Fecha de Nacimiento'] || ''}</td>
-                    <td>${paciente.fields.Telefono || ''}</td>
-                    <td>${paciente.fields.Correo || ''}</td>
-                    <td>${cita.fields.Hora || ''}</td>
-                    <td>${cita.fields.Fecha || ''}</td>
-                    <td>${cita.fields.Motivo || ''}</td>
-                    <td>${tratamiento.fields.Progreso || ''}</td>
-                    <td>${tratamiento.fields['Fecha de Inicio'] || ''}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${paciente.id}">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        tableBody.innerHTML = data.map(record => {
+            if (type === 'cita') {
+                return `
+                    <tr>
+                        <td>${record.fields.Hora || ''}</td>
+                        <td>${record.fields.Fecha || ''}</td>
+                        <td>${record.fields.Motivo || ''}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="update">Actualizar</button>
+                                <button class="delete" data-id="${record.id}">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else if (type === 'tratamiento') {
+                return `
+                    <tr>
+                        <td>${record.fields.Progreso || ''}</td>
+                        <td>${record.fields['Fecha de Inicio'] || ''}</td>
+                        <td>${record.fields.Paciente || ''}</td>
+                        <td>${record.fields.Resultados || ''}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="update">Actualizar</button>
+                                <button class="delete" data-id="${record.id}">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                return `
+                    <tr>
+                        <td>${record.fields.Nombre || ''}</td>
+                        <td>${record.fields.Apellido || ''}</td>
+                        <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
+                        <td>${record.fields.Telefono || ''}</td>
+                        <td>${record.fields.Correo || ''}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="update">Actualizar</button>
+                                <button class="delete" data-id="${record.id}">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
         }).join('');
     }
     </script>
