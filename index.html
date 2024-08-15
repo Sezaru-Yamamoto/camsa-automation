@@ -154,7 +154,7 @@
             <input type="tel" id="telefono" name="telefono" pattern="[0-9]{10}" required>
 
             <label for="fecha-nacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" min="2024-01-01" required>
+            <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" min="1900-01-01" max="2024-01-01" required>
 
             <label for="correo">Correo Electrónico:</label>
             <input type="email" id="correo" name="correo" required>
@@ -167,6 +167,8 @@
 
             <label for="motivo-consulta">Motivo de Consulta:</label>
             <textarea id="motivo-consulta" name="motivo-consulta" maxlength="255" required></textarea>
+            <div id="charCount">255 caracteres restantes</div>
+            
              <input type="submit" value="Registrar Cita">
         </form>
     </div>
@@ -185,33 +187,6 @@
             const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
             const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base
             const TABLE_NAME_CITAS = 'Citas';
-            const TABLE_NAME_PACIENTES = 'Pacientes';
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const idPaciente = urlParams.get('idPaciente');
-            const idCita = urlParams.get('idCita');
-
-            if (idPaciente && idCita) {
-                // Cargar datos del paciente y la cita
-                Promise.all([
-                    fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_PACIENTES}/${idPaciente}`, {
-                        headers: { Authorization: `Bearer ${API_KEY}` }
-                    }).then(response => response.json()),
-                    fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_CITAS}/${idCita}`, {
-                        headers: { Authorization: `Bearer ${API_KEY}` }
-                    }).then(response => response.json())
-                ])
-                .then(([pacienteData, citaData]) => {
-                    document.getElementById('nombre').value = pacienteData.fields.Nombre || '';
-                    document.getElementById('apellido').value = pacienteData.fields.Apellido || '';
-                    document.getElementById('telefono').value = pacienteData.fields.Telefono || '';
-                    document.getElementById('fecha-nacimiento').value = pacienteData.fields['Fecha de Nacimiento'] || '';
-                    document.getElementById('correo').value = pacienteData.fields.Correo || '';
-                    document.getElementById('fecha-cita').value = citaData.fields.Fecha || '';
-                    // Aquí también debes actualizar el select de horas como antes, si es necesario
-                })
-                .catch(error => console.error('Error cargando datos:', error));
-            }
 
             const fechaCitaInput = document.getElementById('fecha-cita');
             const horaCitaSelect = document.getElementById('hora-cita');
@@ -252,11 +227,11 @@
                     const selectedDate = new Date(fechaCita);
 
                     // Define los rangos de horas según el día de la semana
-                    if (selectedDate.getDay() === 0) {
+                    if (selectedDate.getDay() === 6) {
                         // Domingo no disponible
                         horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
                         return;
-                    } else if (selectedDate.getDay() === 6) {
+                    } else if (selectedDate.getDay() === 5) {
                         // Sábado
                         startHour = 10;
                         endHour = 16;
@@ -327,6 +302,15 @@
                 });
             }
         });
+
+             const motivoConsulta = document.getElementById('motivo-consulta');
+            const charCount = document.getElementById('charCount');
+        
+            motivoConsulta.addEventListener('input', () => {
+                const remaining = 255 - motivoConsulta.value.length;
+                charCount.textContent = `${remaining} caracteres restantes`;
+            });
+                
     </script>
 </body>
 </html>
