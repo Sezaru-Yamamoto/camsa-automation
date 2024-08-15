@@ -219,68 +219,66 @@
     }
 
     // Actualiza el formulario para mostrar solo las horas disponibles
-    function actualizarHorasDisponibles(fechaCita) {
-        fetchHorasOcupadas(fechaCita)
-        .then(horasOcupadas => {
-            horaCitaSelect.innerHTML = '';
+   function actualizarHorasDisponibles(fechaCita) {
+    fetchHorasOcupadas(fechaCita)
+    .then(horasOcupadas => {
+        horaCitaSelect.innerHTML = '';
 
-            const now = new Date();
-            const selectedDate = new Date(fechaCita);
-            let startHour, endHour;
+        const now = new Date();
+        console.log("Current hour in 24-hour format:", now.getHours()); // Imprime la hora actual en formato de 24 horas
+        const selectedDate = new Date(fechaCita);
+        let startHour, endHour;
 
-            // Define los horarios de apertura y cierre
-            if (selectedDate.getDay() === 6) {
-                // Sábado
-                startHour = 10;
-                endHour = 16;
-            } else if (selectedDate.getDay() === 0) {
-                // Domingo no disponible
-                horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
+        // Define los horarios de apertura y cierre
+        if (selectedDate.getDay() === 6) {
+            // Sábado
+            startHour = 10;
+            endHour = 16;
+        } else if (selectedDate.getDay() === 0) {
+            // Domingo no disponible
+            horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
+            return;
+        } else {
+            // Lunes a Viernes
+            startHour = 10;
+            endHour = 18;
+        }
+
+        // Verifica si el horario actual ha pasado el horario de cierre
+        if (fechaCita === now.toISOString().split('T')[0]) {
+            if (now.getHours() >= endHour) {
+                // El horario de hoy ya ha pasado, avanza al siguiente día
+                selectedDate.setDate(selectedDate.getDate() + 1);
+                fechaCita = selectedDate.toISOString().split('T')[0];
+                actualizarHorasDisponibles(fechaCita);
                 return;
-            } else {
-                // Lunes a Viernes
-                startHour = 10;
-                endHour = 18;
-            }
-            
-            // Verifica si el horario actual ha pasado el horario de cierre
-            if (fechaCita === now.toISOString().split('T')[0]) {
-                // Si es hoy, ajusta la hora de cierre si es después del horario de cierre
-                if (now.getHours() >= endHour) {
-                    const now = new Date();
-                    console.log("Current hour in 24-hour format:", now.getHours()); // Esta línea imprime la hora actual en formato de 24 horas
-                    // El horario de hoy ya ha pasado, avanza al siguiente día
-                    selectedDate.setDate(selectedDate.getDate() + 1);
-                    fechaCita = selectedDate.toISOString().split('T')[0];
-                    actualizarHorasDisponibles(fechaCita);
-                    return;
-                } else if (now.getHours() > startHour) {
-                    startHour = now.getHours();
-                    if (now.getMinutes() > 0 && now.getMinutes() <= 30) {
-                        startHour += 0.5; // Redondear hacia el próximo intervalo de 30 minutos
-                    }
+            } else if (now.getHours() > startHour) {
+                startHour = now.getHours();
+                if (now.getMinutes() > 0 && now.getMinutes() <= 30) {
+                    startHour += 0.5; // Redondear hacia el próximo intervalo de 30 minutos
                 }
             }
+        }
 
-            for (let hour = startHour; hour < endHour; hour++) {
-                ['00', '30'].forEach(minute => {
-                    const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
-                    const ocupada = horasOcupadas.includes(hora);
+        for (let hour = startHour; hour < endHour; hour++) {
+            ['00', '30'].forEach(minute => {
+                const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
+                const ocupada = horasOcupadas.includes(hora);
 
-                    const option = document.createElement('option');
-                    option.value = hora;
-                    option.textContent = hora;
+                const option = document.createElement('option');
+                option.value = hora;
+                option.textContent = hora;
 
-                    // Deshabilita las horas ocupadas
-                    if (ocupada) {
-                        option.disabled = true;
-                    }
+                // Deshabilita las horas ocupadas
+                if (ocupada) {
+                    option.disabled = true;
+                }
 
-                    horaCitaSelect.appendChild(option);
-                });
-            }
-        });
-    }
+                horaCitaSelect.appendChild(option);
+            });
+        }
+    });
+}
 
     // Botón de registro de cita
     const form = document.getElementById('patientForm');
