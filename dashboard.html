@@ -198,80 +198,88 @@
         });
     });
 
-    async function fetchData() {
-        const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
-        const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
+   async function fetchData() {
+    const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
+    const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
 
-        const fetchTableData = async (table) => {
-            const response = await fetch(`${baseUrl}${table}`, {
-                headers: { 'Authorization': `Bearer ${apiKey}` }
-            });
-            const data = await response.json();
-            return data.records;
-        };
+    const fetchTableData = async (table) => {
+        const response = await fetch(`${baseUrl}${table}`, {
+            headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+        const data = await response.json();
+        return data.records;
+    };
 
-        const [pacientes, citas, tratamientos] = await Promise.all([
-            fetchTableData('Pacientes'),
-            fetchTableData('Citas'),
-            fetchTableData('Tratamientos'),
-        ]);
+    const [pacientes, citas, tratamientos] = await Promise.all([
+        fetchTableData('Pacientes'),
+        fetchTableData('Citas'),
+        fetchTableData('Tratamientos'),
+    ]);
 
-        renderData('pacientesData', pacientes);
-        renderData('citasData', citas, 'cita');
-        renderData('tratamientosData', tratamientos, 'tratamiento');
-    }
+    // Crear un mapeo de IDs de pacientes a nombres completos
+    const pacientesMap = {};
+    pacientes.forEach(paciente => {
+        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+        pacientesMap[paciente.id] = nombreCompleto;
+    });
 
-    function renderData(elementId, data, type) {
-        const tableBody = document.getElementById(elementId);
-        tableBody.innerHTML = data.map(record => {
-            if (type === 'cita') {
-                return `
-                    <tr>
-                        <td>${record.fields.Hora || ''}</td>
-                        <td>${record.fields.Fecha || ''}</td>
-                        <td>${record.fields.Motivo || ''}</td>
-                        <td>
-                            <div class="actions">
-                                <button class="update">Actualizar</button>
-                                <button class="delete" data-id="${record.id}">Eliminar</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            } else if (type === 'tratamiento') {
-                return `
-                    <tr>
-                        <td>${record.fields.Progreso || ''}</td>
-                        <td>${record.fields['Fecha de Inicio'] || ''}</td>
-                        <td>${record.fields.Paciente || ''}</td>
-                        <td>${record.fields.Resultados || ''}</td>
-                        <td>
-                            <div class="actions">
-                                <button class="update">Actualizar</button>
-                                <button class="delete" data-id="${record.id}">Eliminar</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            } else {
-                return `
-                    <tr>
-                        <td>${record.fields.Nombre || ''}</td>
-                        <td>${record.fields.Apellido || ''}</td>
-                        <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
-                        <td>${record.fields.Telefono || ''}</td>
-                        <td>${record.fields.Correo || ''}</td>
-                        <td>
-                            <div class="actions">
-                                <button class="update">Actualizar</button>
-                                <button class="delete" data-id="${record.id}">Eliminar</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
-        }).join('');
-    }
+    renderData('pacientesData', pacientes);
+    renderData('citasData', citas, 'cita');
+    renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
+}
+
+   function renderData(elementId, data, type, pacientesMap = {}) {
+    const tableBody = document.getElementById(elementId);
+    tableBody.innerHTML = data.map(record => {
+        if (type === 'cita') {
+            return `
+                <tr>
+                    <td>${record.fields.Hora || ''}</td>
+                    <td>${record.fields.Fecha || ''}</td>
+                    <td>${record.fields.Motivo || ''}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${record.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else if (type === 'tratamiento') {
+            const pacienteNombre = pacientesMap[record.fields.Paciente] || 'Paciente desconocido';
+            return `
+                <tr>
+                    <td>${record.fields.Progreso || ''}</td>
+                    <td>${record.fields['Fecha de Inicio'] || ''}</td>
+                    <td>${pacienteNombre}</td>
+                    <td>${record.fields.Resultados || ''}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${record.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            return `
+                <tr>
+                    <td>${record.fields.Nombre || ''}</td>
+                    <td>${record.fields.Apellido || ''}</td>
+                    <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
+                    <td>${record.fields.Telefono || ''}</td>
+                    <td>${record.fields.Correo || ''}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${record.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+    }).join('');
+}
     </script>
 </body>
 </html>
