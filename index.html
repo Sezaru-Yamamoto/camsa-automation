@@ -241,6 +241,8 @@
                         endHour = 18;
                     }
 
+                    console.log(selectedDate.getDay())
+                    
                     for (let hour = startHour; hour < endHour; hour++) {
                         ['00', '30'].forEach(minute => {
                             const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
@@ -264,7 +266,7 @@
                 });
             }
 
-            console.log(selectedDates.getDay())
+            
 
             
             const form = document.getElementById('patientForm');
