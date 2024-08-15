@@ -183,138 +183,153 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
-            const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base
-            const TABLE_NAME_CITAS = 'Citas';
+    document.addEventListener('DOMContentLoaded', function() {
+    const API_KEY = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';  // Token de API
+    const BASE_ID = 'app0HWHKlb3P6MChm';  // ID de la base
+    const TABLE_NAME_CITAS = 'Citas';
 
-            const fechaCitaInput = document.getElementById('fecha-cita');
-            const horaCitaSelect = document.getElementById('hora-cita');
+    const fechaCitaInput = document.getElementById('fecha-cita');
+    const horaCitaSelect = document.getElementById('hora-cita');
 
-            flatpickr(fechaCitaInput, {
-                dateFormat: 'Y-m-d',
-                minDate: 'today',
-                onChange: function(selectedDates) {
-                    const fechaSeleccionada = selectedDates[0];
-                    if (fechaSeleccionada) {
-                        const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
-                        actualizarHorasDisponibles(fechaCita);
+    flatpickr(fechaCitaInput, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today',
+        onChange: function(selectedDates) {
+            const fechaSeleccionada = selectedDates[0];
+            if (fechaSeleccionada) {
+                const fechaCita = fechaSeleccionada.toISOString().split('T')[0];
+                actualizarHorasDisponibles(fechaCita);
+            }
+        }
+    });
+
+    // Obtiene las horas ocupadas en la fecha seleccionada
+    function fetchHorasOcupadas(fecha) {
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_CITAS}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
+
+        return fetch(url, {
+            headers: {
+                Authorization: `Bearer ${API_KEY}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data.records.map(record => record.fields['Hora']);
+        });
+    }
+
+    // Actualiza el formulario para mostrar solo las horas disponibles
+    function actualizarHorasDisponibles(fechaCita) {
+        fetchHorasOcupadas(fechaCita)
+        .then(horasOcupadas => {
+            horaCitaSelect.innerHTML = '';
+
+            const now = new Date();
+            const selectedDate = new Date(fechaCita);
+            let startHour, endHour;
+
+            // Define los horarios de apertura y cierre
+            if (selectedDate.getDay() === 6) {
+                // Sábado
+                startHour = 10;
+                endHour = 16;
+            } else if (selectedDate.getDay() === 0) {
+                // Domingo no disponible
+                horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
+                return;
+            } else {
+                // Lunes a Viernes
+                startHour = 10;
+                endHour = 18;
+            }
+
+            // Verifica si el horario actual ha pasado el horario de cierre
+            if (fechaCita === now.toISOString().split('T')[0]) {
+                // Si es hoy, ajusta la hora de cierre si es después del horario de cierre
+                if (now.getHours() >= endHour) {
+                    // El horario de hoy ya ha pasado, avanza al siguiente día
+                    selectedDate.setDate(selectedDate.getDate() + 1);
+                    fechaCita = selectedDate.toISOString().split('T')[0];
+                    actualizarHorasDisponibles(fechaCita);
+                    return;
+                } else if (now.getHours() > startHour) {
+                    startHour = now.getHours();
+                    if (now.getMinutes() > 0 && now.getMinutes() <= 30) {
+                        startHour += 0.5; // Redondear hacia el próximo intervalo de 30 minutos
                     }
                 }
-            });
-
-            function fetchHorasOcupadas(fecha) {
-                const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME_CITAS}?filterByFormula=AND(IS_SAME({Fecha}, '${fecha}', 'day'))`;
-
-                return fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    return data.records.map(record => record.fields['Hora']);
-                });
             }
 
-            function actualizarHorasDisponibles(fechaCita) {
-                fetchHorasOcupadas(fechaCita)
-                .then(horasOcupadas => {
-                    horaCitaSelect.innerHTML = '';
+            for (let hour = startHour; hour < endHour; hour++) {
+                ['00', '30'].forEach(minute => {
+                    const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
+                    const ocupada = horasOcupadas.includes(hora);
 
-                    let startHour, endHour;
-                    const now = new Date();
-                    const selectedDate = new Date(fechaCita);
+                    const option = document.createElement('option');
+                    option.value = hora;
+                    option.textContent = hora;
 
-                    // Define los rangos de horas según el día de la semana
-                    if (selectedDate.getDay() === 6) {
-                        // Domingo no disponible
-                        horaCitaSelect.innerHTML = '<option value="">No disponible</option>';
-                        return;
-                    } else if (selectedDate.getDay() === 5) {
-                        // Sábado
-                        startHour = 10;
-                        endHour = 16;
-                    } else {
-                        // Lunes a Viernes
-                        startHour = 10;
-                        endHour = 18;
+                    // Deshabilita las horas ocupadas
+                    if (ocupada) {
+                        option.disabled = true;
                     }
 
-                    console.log(selectedDate.getDay())
-                    
-                    for (let hour = startHour; hour < endHour; hour++) {
-                        ['00', '30'].forEach(minute => {
-                            const hora = `${hour.toString().padStart(2, '0')}:${minute}`;
-                            const ocupada = horasOcupadas.includes(hora);
-
-                            const option = document.createElement('option');
-                            option.value = hora;
-                            option.textContent = hora;
-
-                            // Deshabilita horas ocupadas y horas pasadas si es hoy
-                            if (ocupada || 
-                                (fechaCita === now.toISOString().split('T')[0] &&
-                                 (hour < now.getHours() || 
-                                  (hour === now.getHours() && parseInt(minute) <= now.getMinutes())))) {
-                                option.disabled = true;
-                            }
-
-                            horaCitaSelect.appendChild(option);
-                        });
-                    }
-                });
-            }
-
-            
-
-            
-            const form = document.getElementById('patientForm');
-            const confirmationOverlay = document.getElementById('confirmationOverlay');
-            const confirmationButton = document.getElementById('confirmationButton');
-
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                enviarDatosFormulario()
-                .then(response => {
-                    if (response.ok) {
-                        confirmationOverlay.style.display = 'flex';
-                    } else {
-                        alert('No se logró concretar la cita. Por favor, inténtelo nuevamente.');
-                    }
-                })
-                .catch(error => {
-                    alert('Error en la comunicación. Por favor, inténtelo nuevamente.');
-                });
-            });
-
-            confirmationButton.addEventListener('click', function() {
-                confirmationOverlay.style.display = 'none';
-                form.reset();
-                horaCitaSelect.innerHTML = '';
-            });
-
-            function enviarDatosFormulario() {
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-
-                return fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
+                    horaCitaSelect.appendChild(option);
                 });
             }
         });
+    }
 
-             const motivoConsulta = document.getElementById('motivo-consulta');
-            const charCount = document.getElementById('charCount');
-        
-            motivoConsulta.addEventListener('input', () => {
-                const remaining = 255 - motivoConsulta.value.length;
-                charCount.textContent = `${remaining} caracteres restantes`;
-            });
+    // Botón de registro de cita
+    const form = document.getElementById('patientForm');
+    const confirmationOverlay = document.getElementById('confirmationOverlay');
+    const confirmationButton = document.getElementById('confirmationButton');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        enviarDatosFormulario()
+        .then(response => {
+            if (response.ok) {
+                confirmationOverlay.style.display = 'flex';
+            } else {
+                alert('No se logró concretar la cita. Por favor, inténtelo nuevamente.');
+            }
+        })
+        .catch(error => {
+            alert('Error en la comunicación. Por favor, inténtelo nuevamente.');
+        });
+    });
+
+    confirmationButton.addEventListener('click', function() {
+        confirmationOverlay.style.display = 'none';
+        form.reset();
+        horaCitaSelect.innerHTML = '';
+    });
+
+    // Envía los datos al webhook de Make
+    function enviarDatosFormulario() {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        return fetch('https://hook.us1.make.com/sa972atghsaxg2c85cpkzqwiuybmq91p', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+    }
+
+    // Función para contar caracteres restantes
+    const motivoConsulta = document.getElementById('motivo-consulta');
+    const charCount = document.getElementById('charCount');
+
+    motivoConsulta.addEventListener('input', () => {
+        const remaining = 255 - motivoConsulta.value.length;
+        charCount.textContent = `${remaining} caracteres restantes`;
+    });
+});
+
                 
     </script>
 </body>
