@@ -6,7 +6,7 @@
     <title>Dashboard Clínica</title>
        <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-   <style>
+  <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
@@ -33,6 +33,10 @@
 
         .sidebar.hide {
             transform: translateX(-100%); /* Ocultar el menú moviéndolo fuera de la vista */
+        }
+
+        .sidebar.show {
+            transform: translateX(0); /* Mostrar el menú moviéndolo a su posición original */
         }
 
         .sidebar img {
@@ -204,6 +208,7 @@
 
             table {
                 font-size: 14px;
+                width: 100%; /* Ancho completo en modo móvil */
                 overflow-x: auto;
                 display: block;
             }
