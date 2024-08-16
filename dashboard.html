@@ -230,7 +230,7 @@
         </div>
     </div>
 
-    <script>
+     <script>
     document.addEventListener('DOMContentLoaded', function() {
         if (sessionStorage.getItem('authenticated') !== 'true') {
             window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
@@ -262,41 +262,54 @@
             const response = await fetch(`${baseUrl}${table}`, {
                 headers: { 'Authorization': `Bearer ${apiKey}` }
             });
+            if (!response.ok) {
+                console.error(`Error fetching ${table}: ${response.statusText}`);
+                return [];
+            }
             const data = await response.json();
             return data.records;
         };
 
-        const [pacientes, citas, tratamientos] = await Promise.all([
-            fetchTableData('Pacientes'),
-            fetchTableData('Citas'),
-            fetchTableData('Tratamientos'),
-        ]);
+        try {
+            const [pacientes, citas, tratamientos] = await Promise.all([
+                fetchTableData('Pacientes'),
+                fetchTableData('Citas'),
+                fetchTableData('Tratamientos'),
+            ]);
 
-        // Crear un mapeo de IDs de pacientes a nombres completos
-        const pacientesMap = {};
-        pacientes.forEach(paciente => {
-            const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
-            pacientesMap[paciente.id] = nombreCompleto;
-        });
+            // Log data for debugging
+            console.log('Pacientes:', pacientes);
+            console.log('Citas:', citas);
+            console.log('Tratamientos:', tratamientos);
 
-        // Crear un mapeo de IDs de citas a datos
-        const citasMap = {};
-        citas.forEach(cita => {
-            const pacienteNombre = pacientesMap[cita.fields.Paciente] || 'Nombre no disponible';
-            citasMap[cita.id] = {
-                fecha: cita.fields.Fecha || '',
-                hora: cita.fields.Hora || '',
-                paciente: pacienteNombre,
-            };
-        });
+            // Crear un mapeo de IDs de pacientes a nombres completos
+            const pacientesMap = {};
+            pacientes.forEach(paciente => {
+                const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+                pacientesMap[paciente.id] = nombreCompleto;
+            });
 
-        // Renderizar la tabla de Overview
-        renderOverview(pacientes, citasMap, tratamientos);
+            // Crear un mapeo de IDs de citas a datos
+            const citasMap = {};
+            citas.forEach(cita => {
+                const pacienteNombre = pacientesMap[cita.fields.Paciente] || 'Nombre no disponible';
+                citasMap[cita.id] = {
+                    fecha: cita.fields.Fecha || '',
+                    hora: cita.fields.Hora || '',
+                    paciente: pacienteNombre,
+                };
+            });
 
-        // Renderizar las demás secciones
-        renderData('pacientesData', pacientes);
-        renderData('citasData', citas, 'cita', pacientesMap);
-        renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
+            // Renderizar la tabla de Overview
+            renderOverview(pacientes, citasMap, tratamientos);
+
+            // Renderizar las demás secciones
+            renderData('pacientesData', pacientes, 'paciente');
+            renderData('citasData', citas, 'cita', pacientesMap);
+            renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
 
     function renderOverview(pacientes, citasMap, tratamientos) {
