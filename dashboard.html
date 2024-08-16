@@ -99,6 +99,7 @@
             padding: 20px;
             overflow-y: auto;
             background-color: #ecf0f1;
+            margin-left: 250px; /* Ajustado para dejar espacio para la barra lateral */
             transition: margin-left 0.3s ease;
         }
 
@@ -112,7 +113,7 @@
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 270px); /* Ancho ajustado para dejar espacio para el menú */
             border-collapse: collapse;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -178,8 +179,7 @@
             }
 
             .sidebar.show {
-                left: 0; /* Mostrar menú en móviles */
-                transform: translateX(0);
+                transform: translateX(0); /* Mostrar menú en móviles */
             }
 
             .menu-toggle {
@@ -198,13 +198,14 @@
             }
 
             .main-content {
-                margin-left: 0;
+                margin-left: 0; /* Ajustado para pantalla completa en móviles */
             }
 
             table {
                 font-size: 14px;
                 overflow-x: auto;
                 display: block;
+                width: 100%; /* Ancho completo en móviles */
             }
 
             .table-container {
@@ -213,6 +214,7 @@
             }
         }
     </style>
+
 </head>
 <body>
       <button class="menu-toggle">&#9776;</button>
@@ -324,18 +326,20 @@
         sessionStorage.removeItem('authenticated');
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
     });
-
-      // Manejo de la navegación del menú
-            document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
-                menuItem.addEventListener('click', function() {
-                    const sectionId = this.getAttribute('data-section');
-                    showSection(sectionId);
-                    document.querySelectorAll('.sidebar ul li').forEach(function(item) {
-                        item.classList.remove('active');
-                    });
-                    this.classList.add('active');
+document.querySelectorAll('.sidebar ul li').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
                 });
+                document.querySelector(`#${this.getAttribute('data-section')}`).classList.add('active');
+                
+                document.querySelectorAll('.sidebar ul li').forEach(li => {
+                    li.classList.remove('active');
+                });
+                this.classList.add('active');
             });
+        });
+
         
      document.getElementById('logoutButton').addEventListener('click', function() {
             sessionStorage.removeItem('authenticated');
