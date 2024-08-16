@@ -211,8 +211,8 @@
         if (sessionStorage.getItem('authenticated') !== 'true') {
             window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
         } else {
-            fetchData();
             showSection('pacientes');
+            fetchData();
         }
     });
 
