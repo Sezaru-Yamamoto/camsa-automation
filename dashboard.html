@@ -329,7 +329,7 @@
             const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
             return `
                 <tr>
-                    ${type === 'overview''? `
+                    ${type === 'overview' ? `
                         <td>${item.fields.Nombre || ''}</td>
                         <td>${item.fields.Apellido || ''}</td>
                         <td>${item.fields.Correo || ''}</td>
