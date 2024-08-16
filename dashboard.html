@@ -312,37 +312,37 @@
         }
     }
 
-    function renderOverview(pacientes, citasMap, tratamientos) {
-        const tableBody = document.getElementById('overviewData');
-        tableBody.innerHTML = pacientes.map(paciente => {
-            const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
-            const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
-            const correo = paciente.fields.Correo || '';
-            const telefono = paciente.fields.Teléfono || '';
-            
-            // Buscar citas y progresos asociados al paciente
-            const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
-            const progreso = tratamientos.find(tratamiento => tratamiento.fields.Paciente === paciente.id)?.fields.Progreso || '';
+   function renderOverview(pacientes, citasMap, tratamientos) {
+    const tableBody = document.getElementById('overviewData');
+    tableBody.innerHTML = pacientes.map(paciente => {
+        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+        const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
+        const correo = paciente.fields.Correo || '';
+        const telefono = paciente.fields.Teléfono || '';
+        
+        // Buscar citas y progresos asociados al paciente
+        const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
+        const progreso = tratamientos.find(tratamiento => tratamiento.fields.Paciente === paciente.id)?.fields.Progreso || '';
 
-            return `
-                <tr>
-                    <td>${nombreCompleto}</td>
-                    <td>${fechaNacimiento}</td>
-                    <td>${correo}</td>
-                    <td>${telefono}</td>
-                    <td>${citasData.fecha || ''}</td>
-                    <td>${citasData.hora || ''}</td>
-                    <td>${progreso || ''}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${paciente.id}">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
+        return `
+            <tr>
+                <td>${nombreCompleto}</td>
+                <td>${fechaNacimiento}</td>
+                <td>${correo}</td>
+                <td>${telefono}</td>
+                <td>${citasData.fecha || ''}</td>
+                <td>${citasData.hora || ''}</td>
+                <td>${progreso || 'No disponible'}</td>
+                <td>
+                    <div class="actions">
+                        <button class="update">Actualizar</button>
+                        <button class="delete" data-id="${paciente.id}">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
 
     function renderData(tableId, data, type, pacientesMap) {
         const tableBody = document.getElementById(tableId);
