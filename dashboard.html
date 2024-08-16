@@ -264,10 +264,12 @@
     const tableBody = document.getElementById(elementId);
     tableBody.innerHTML = data.map(record => {
         if (type === 'cita') {
+            const pacienteNombre = pacientesMap[record.fields.Paciente];
             return `
                 <tr>
                     <td>${record.fields.Hora || ''}</td>
                     <td>${record.fields.Fecha || ''}</td>
+                    <td>${pacienteNombre}</td>
                     <td>${record.fields.Notas || ''}</td>
                     <td>
                         <div class="actions">
@@ -278,7 +280,7 @@
                 </tr>
             `;
         } else if (type === 'tratamiento') {
-            const pacienteNombre = pacientesMap[record.fields.Paciente] || 'Paciente desconocido';
+            const pacienteNombre = pacientesMap[record.fields.Paciente];
             return `
                 <tr>
                     <td>${record.fields.Progreso || ''}</td>
