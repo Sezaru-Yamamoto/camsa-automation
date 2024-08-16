@@ -99,6 +99,7 @@
             padding: 20px;
             overflow-y: auto;
             background-color: #ecf0f1;
+            margin-left: 250px; /* Espacio para el menú */
             transition: margin-left 0.3s ease;
         }
 
@@ -112,7 +113,7 @@
         }
 
         table {
-            width: calc(100% - 30px); 
+            width: calc(100% - 30px); /* Ajustar el ancho de la tabla */
             border-collapse: collapse;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -335,12 +336,7 @@
                     });
                     this.classList.add('active');
 
-                    // Cerrar el menú en móviles al seleccionar una opción
-                    if (window.innerWidth <= 768) {
-                        document.querySelector('.sidebar').classList.remove('show');
-                    }
-                });
-            });
+                    
         
      document.getElementById('logoutButton').addEventListener('click', function() {
             sessionStorage.removeItem('authenticated');
