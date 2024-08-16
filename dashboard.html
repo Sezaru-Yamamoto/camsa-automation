@@ -312,7 +312,7 @@
         }
     }
 
-   function renderOverview(pacientes, citasMap, tratamientos) {
+ function renderOverview(pacientes, citasMap, tratamientos) {
     const tableBody = document.getElementById('overviewData');
     tableBody.innerHTML = pacientes.map(paciente => {
         const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
