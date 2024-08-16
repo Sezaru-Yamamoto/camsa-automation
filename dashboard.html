@@ -277,10 +277,6 @@
                 fetchTableData('Tratamientos'),
             ]);
 
-            // Log data for debugging
-            console.log('Pacientes:', pacientes);
-            console.log('Citas:', citas);
-            console.log('Tratamientos:', tratamientos);
 
             // Crear un mapeo de IDs de pacientes a nombres completos
             const pacientesMap = {};
@@ -367,13 +363,9 @@ function renderOverview(pacientes, citasMap, tratamientosMap) {
         const correo = paciente.fields.Correo || '';
         const telefono = paciente.fields.Teléfono || '';
 
-        // Encuentra las citas correspondientes
-        const citas = Object.values(citasMap).filter(cita => cita.paciente === nombreCompleto);
-        const tratamientos = Object.values(tratamientosMap).filter(tratamiento => tratamiento.paciente === nombreCompleto);
-
-        // Manejar múltiples citas y tratamientos
-        const citasText = citas.length > 0 ? citas.map(c => `${c.fecha} a las ${c.hora}`).join('<br>') : 'No disponible';
-        const tratamientosText = tratamientos.length > 0 ? tratamientos.map(t => `${t.progreso}`).join('<br>') : 'No disponible';
+        // Encuentra las citas y tratamientos correspondientes
+        const citas = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
+        const tratamientos = Object.values(tratamientosMap).find(tratamiento => tratamiento.paciente === nombreCompleto) || {};
 
         return `
             <tr>
@@ -381,8 +373,9 @@ function renderOverview(pacientes, citasMap, tratamientosMap) {
                 <td>${fechaNacimiento}</td>
                 <td>${correo}</td>
                 <td>${telefono}</td>
-                <td>${citasText}</td>
-                <td>${tratamientosText}</td>
+                <td>${citas.fecha || 'No disponible'}</td>
+                <td>${citas.hora || 'No disponible'}</td>
+                 <td>${item.fields.Progreso || ''}</td>
                 <td>
                     <div class="actions">
                         <button class="update">Actualizar</button>
