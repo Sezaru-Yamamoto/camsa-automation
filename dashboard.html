@@ -7,7 +7,7 @@
        <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body {
+    body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
             margin: 0;
@@ -60,6 +60,10 @@
 
         .sidebar ul li:hover {
             background-color: #34495e;
+        }
+
+        .menu-toggle {
+            display: none;
         }
 
         #logoutButton {
@@ -157,7 +161,29 @@
             .sidebar {
                 width: 100%;
                 height: auto;
-                position: relative;
+                position: fixed;
+                top: 0;
+                left: -250px;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                font-size: 24px;
+                cursor: pointer;
+                z-index: 1000;
+                color: #2c3e50;
+                background: white;
+                border: none;
+                padding: 10px;
+                border-radius: 50%;
             }
 
             .main-content {
@@ -166,11 +192,19 @@
 
             table {
                 font-size: 14px;
+                overflow-x: auto;
+                display: block;
+            }
+
+            .table-container {
+                overflow-x: auto;
+                white-space: nowrap;
             }
         }
     </style>
 </head>
 <body>
+      <button class="menu-toggle">&#9776;</button>
     <div class="sidebar">
         <img src="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" alt="Logo de la Clínica">
         <h2>Dashboard</h2>
@@ -433,7 +467,10 @@
         }).join('');
     }
         
-         
+         document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('show');
+    });
+
     function showSection(sectionId) {
         document.querySelectorAll('.section').forEach(function(section) {
             section.classList.remove('active');
