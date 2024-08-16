@@ -6,7 +6,7 @@
     <title>Dashboard Clínica</title>
        <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-     <style>
+    <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
@@ -24,7 +24,6 @@
             padding-top: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             position: relative;
-            transition: transform 0.3s ease;
         }
 
         .sidebar img {
@@ -158,30 +157,11 @@
             .sidebar {
                 width: 100%;
                 height: auto;
-                position: fixed;
-                top: 0;
-                left: -250px;
-                z-index: 1000;
-            }
-
-            .sidebar.show {
-                transform: translateX(250px);
-            }
-
-            .menu-toggle {
-                display: block;
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                z-index: 1001;
-                cursor: pointer;
-                font-size: 24px;
-                color: #2c3e50;
+                position: relative;
             }
 
             .main-content {
                 margin-left: 0;
-                padding: 20px 10px;
             }
 
             table {
@@ -191,7 +171,6 @@
     </style>
 </head>
 <body>
-    <div class="menu-toggle">&#9776;</div>
     <div class="sidebar">
         <img src="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" alt="Logo de la Clínica">
         <h2>Dashboard</h2>
@@ -462,9 +441,7 @@
         document.getElementById(sectionId).classList.add('active');
     }
 
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
+        
     </script>
 </body>
 </html>
