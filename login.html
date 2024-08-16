@@ -1,12 +1,4 @@
-    <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Dashboard</title>
-    <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-   <style>
+ <style>
         body {
             font-family: 'Roboto', sans-serif;
             display: flex;
@@ -23,16 +15,22 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 90%;
+            max-width: 100%;
             width: 100%;
             box-sizing: border-box;
+            max-height: 90%;
+            overflow-y: auto;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .login-container img {
             display: block;
             margin: 0 auto 20px auto;
-            max-width: 120px;
+            max-width: 150px;
             height: auto;
         }
 
@@ -95,7 +93,11 @@
         @media (max-width: 600px) {
             .login-container {
                 padding: 15px;
-                max-width: 90%;
+                width: 90%;
+                max-width: 400px;
+                height: auto;
+                max-height: 90vh;
+                overflow-y: auto;
             }
 
             .login-container h2 {
@@ -110,57 +112,7 @@
             }
 
             .login-container img {
-                max-width: 80px;
+                max-width: 100px;
             }
         }
     </style>
-</head>
-<body>
-    <div class="login-container">
-        <img src="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" alt="Logo">
-        <h2>Iniciar Sesión</h2>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Usuario" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
-            <div class="show-password">
-                <input type="checkbox" id="showPassword">
-                <label for="showPassword">Mostrar contraseña</label>
-            </div>
-            <input type="submit" value="Acceder">
-        </form>
-        <div id="errorMessage" class="error-message">Credenciales incorrectas, intente nuevamente.</div>
-    </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch('https://hook.us1.make.com/92vyd6x4pzsdghneocy5rpyiu6q4bpgu', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const result = await response.json();
-
-                if (result.authenticated) {
-                    sessionStorage.setItem('authenticated', 'true');
-                    window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/dashboard.html';
-                } else {
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error al enviar los datos:', error);
-                document.getElementById('errorMessage').style.display = 'block';
-            }
-        });
-
-        document.getElementById('showPassword').addEventListener('change', function() {
-            const passwordInput = document.getElementById('password');
-            passwordInput.type = this.checked ? 'text' : 'password';
-        });
-    </script>
-</body>
-</html>
