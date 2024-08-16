@@ -326,19 +326,29 @@
         sessionStorage.removeItem('authenticated');
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
     });
-document.querySelectorAll('.sidebar ul li').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.section').forEach(section => {
+// Manejo de la navegación del menú
+            document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+                menuItem.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                    document.querySelectorAll('.sidebar ul li').forEach(function(item) {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    // Cerrar el menú en móviles al seleccionar una opción
+                    if (window.innerWidth <= 768) {
+                        document.querySelector('.sidebar').classList.remove('show');
+                    }
+                });
+            });
+
+            function showSection(sectionId) {
+                document.querySelectorAll('.section').forEach(function(section) {
                     section.classList.remove('active');
                 });
-                document.querySelector(`#${this.getAttribute('data-section')}`).classList.add('active');
-                
-                document.querySelectorAll('.sidebar ul li').forEach(li => {
-                    li.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
+                document.getElementById(sectionId).classList.add('active');
+            }
 
         
      document.getElementById('logoutButton').addEventListener('click', function() {
