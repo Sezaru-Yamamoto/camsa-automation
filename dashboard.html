@@ -319,17 +319,8 @@
         const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
         const correo = paciente.fields.Correo || '';
         const telefono = paciente.fields.Teléfono || '';
-        
-        // Verifica la existencia del paciente en los tratamientos
-        const tratamiento = tratamientos.find(tratamiento => tratamiento.fields.Paciente === paciente.id);
-        console.log('Tratamiento para paciente:', paciente.id, tratamiento);
-
-        const progreso = tratamiento ? tratamiento.fields.Progreso || 'No disponible' : 'No disponible';
-        console.log('Progreso:', progreso);
-        
-        // Buscar citas asociadas al paciente
-        const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
-
+        const progreso = tratamiento.fields.Progreso || '';
+      
         return `
             <tr>
                 <td>${nombreCompleto}</td>
