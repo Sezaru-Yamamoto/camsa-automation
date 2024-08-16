@@ -148,6 +148,29 @@
     </div>
 
     <div class="main-content">
+         <!-- Sección para Overview -->
+        <div id="overview" class="section">
+            <h2>Overview</h2>
+            <table class="table" id="overviewTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Fecha de Nacimiento</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Próxima cita</th>
+                        <th>Hora</th>
+                        <th>Progreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="overviewData">
+                    <!-- Aquí se llenarán los datos -->
+                </tbody>
+            </table>
+        </div>
+
         <!-- Sección para Pacientes -->
         <div id="pacientes" class="section">
             <h2>Pacientes</h2>
@@ -213,7 +236,7 @@
             window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
         } else {
             fetchData();
-            showSection('pacientes');
+            showSection('overview');
         }
     });
 
@@ -254,9 +277,30 @@
         pacientes.forEach(paciente => {
         const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
         pacientesMap[paciente.id] = nombreCompleto;
+        //PRUEBA
+        const fechaNacimiento = `${paciente.fields.Fecha de nacimiento || ''}`; 
+        const correoPaciente = `${paciente.fields.Correo || ''}`; 
+        const telefonoPaciente = `${paciente.fields.Teléfono || ''}`;     
+        });
+
+                //PRUEBA
+         // Crear un mapeo de IDs de Citas
+        const citasMap = {};
+        pacientes.forEach(cita => {
+        const fechaCita = `${paciente.fields.Fecha || ''}`; 
+        const horaCita = `${paciente.fields.Hora || ''}`;  
+        });
+    
+         // Crear un mapeo de IDs de tratamientos
+        const tratamientosMap = {};
+        pacientes.forEach(tratamiento => {
+        const progresoTratamiento = `${paciente.fields.Progreso || ''}`;   
         });
         
+        
         // Pasar pacientesMap a renderData para citas y tratamientos
+        //PRUEBA
+         renderData('overview', pacientesMap, citasMap, tratamientosMap);
         renderData('pacientesData', pacientes);
         renderData('citasData', citas, 'cita', pacientesMap);
         renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
@@ -265,7 +309,25 @@
     function renderData(elementId, data, type, pacientesMap = {}) {
     const tableBody = document.getElementById(elementId);
     tableBody.innerHTML = data.map(record => {
-        if (type === 'cita') {
+        //PRUEBA
+        if (type === 'overview') {
+            const pacienteNombre = pacientesMap[record.fields.Paciente];
+            const pacienteNombre = pacientesMap[record.fields.Paciente];
+            return `
+                <tr>
+                    <td>${record.fields.Hora || ''}</td>
+                    <td>${record.fields.Fecha || ''}</td>
+                    <td>${pacienteNombre || 'Nombre no disponible'}</td>
+                    <td>${record.fields.Notas || ''}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${record.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            } else if (type === 'cita') {
             const pacienteNombre = pacientesMap[record.fields.Paciente];
             return `
                 <tr>
