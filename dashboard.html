@@ -221,6 +221,15 @@
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
     });
 
+         document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+        menuItem.addEventListener('click', function() {
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
+        });
+    });
+        
    async function fetchData() {
     const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
     const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
