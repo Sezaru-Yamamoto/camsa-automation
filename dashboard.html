@@ -210,9 +210,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         if (sessionStorage.getItem('authenticated') !== 'true') {
             window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-        } else {
-            showSection('pacientes');
+        } else { 
             fetchData();
+            showSection('pacientesTable');
         }
     });
 
