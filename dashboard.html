@@ -231,6 +231,7 @@
     </div>
 
      <script>
+   <script>
     document.addEventListener('DOMContentLoaded', function() {
         if (sessionStorage.getItem('authenticated') !== 'true') {
             window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
@@ -254,104 +255,103 @@
         });
     });
 
-   async function fetchData() {
-    const [pacientes, citas, tratamientos] = await Promise.all([
-        fetchTableData('Pacientes'),
-        fetchTableData('Citas'),
-        fetchTableData('Tratamientos'),
-    ]);
+    async function fetchData() {
+        const [pacientes, citas, tratamientos] = await Promise.all([
+            fetchTableData('Pacientes'),
+            fetchTableData('Citas'),
+            fetchTableData('Tratamientos'),
+        ]);
 
-    // Mapeos de datos
-    const pacientesMap = {};
-    pacientes.forEach(paciente => {
-        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
-        pacientesMap[paciente.id] = nombreCompleto;
-    });
+        // Mapeos de datos
+        const pacientesMap = {};
+        pacientes.forEach(paciente => {
+            const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+            pacientesMap[paciente.id] = nombreCompleto;
+        });
 
-    const citasMap = {};
-    citas.forEach(cita => {
-        citasMap[cita.fields.Paciente] = {
-            fecha: cita.fields.Fecha || '',
-            hora: cita.fields.Hora || '',
-        };
-    });
+        const citasMap = {};
+        citas.forEach(cita => {
+            citasMap[cita.fields.Paciente] = {
+                fecha: cita.fields.Fecha || '',
+                hora: cita.fields.Hora || '',
+            };
+        });
 
-    const tratamientosMap = {};
-    tratamientos.forEach(tratamiento => {
-        tratamientosMap[tratamiento.fields.Paciente] = tratamiento.fields.Progreso || '';
-    });
+        const tratamientosMap = {};
+        tratamientos.forEach(tratamiento => {
+            tratamientosMap[tratamiento.fields.Paciente] = tratamiento.fields.Progreso || '';
+        });
 
-    // Renderizar la tabla Overview
-    renderData('overviewData', pacientes, 'overview', citasMap, tratamientosMap);
+        // Renderizar la tabla Overview
+        renderData('overviewData', pacientes, 'overview', citasMap, tratamientosMap);
 
-    // Renderizar las demás secciones
-    renderData('pacientesData', pacientes, 'paciente');
-    renderData('citasData', citas, 'cita', pacientesMap);
-    renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
-}
+        // Renderizar las demás secciones
+        renderData('pacientesData', pacientes, 'paciente');
+        renderData('citasData', citas, 'cita', null, null, pacientesMap);
+        renderData('tratamientosData', tratamientos, 'tratamiento', null, null, pacientesMap);
+    }
 
-            
+    function renderData(tableId, data, type, citasMap = {}, tratamientosMap = {}, pacientesMap = {}) {
+        const tableBody = document.getElementById(tableId);
+        tableBody.innerHTML = data.map(item => {
+            let row = '';
+            if (type === 'overview') {
+                const nombreCompleto = `${item.fields.Nombre || ''} ${item.fields.Apellido || ''}`;
+                const fechaNacimiento = item.fields['Fecha de Nacimiento'] || '';
+                const correo = item.fields.Correo || '';
+                const telefono = item.fields.Teléfono || '';
+                const cita = citasMap[item.id] || { fecha: '', hora: '' };
+                const progreso = tratamientosMap[item.id] || '';
 
-  function renderData(tableId, data, type, citasMap, tratamientosMap, pacientesMap) {
-    const tableBody = document.getElementById(tableId);
-    tableBody.innerHTML = data.map(item => {
-        let row = '';
-        if (type === 'overview') {
-            const nombreCompleto = `${item.fields.Nombre || ''} ${item.fields.Apellido || ''}`;
-            const fechaNacimiento = item.fields['Fecha de Nacimiento'] || '';
-            const correo = item.fields.Correo || '';
-            const telefono = item.fields.Teléfono || '';
-            const cita = citasMap[item.id] || { fecha: '', hora: '' };
-            const progreso = tratamientosMap[item.id] || '';
+                row = `
+                    <td>${nombreCompleto}</td>
+                    <td>${fechaNacimiento}</td>
+                    <td>${correo}</td>
+                    <td>${telefono}</td>
+                    <td>${cita.fecha}</td>
+                    <td>${cita.hora}</td>
+                    <td>${progreso}</td>
+                `;
+            } else if (type === 'cita') {
+                const nombreCompleto = pacientesMap[item.fields.Paciente] || 'Nombre no disponible';
+                row = `
+                    <td>${item.fields.Hora || ''}</td>
+                    <td>${item.fields.Fecha || ''}</td>
+                    <td>${nombreCompleto}</td>
+                    <td>${item.fields.Notas || ''}</td>
+                `;
+            } else if (type === 'tratamiento') {
+                const nombreCompleto = pacientesMap[item.fields.Paciente] || 'Nombre no disponible';
+                row = `
+                    <td>${item.fields.Progreso || ''}</td>
+                    <td>${item.fields['Fecha de Inicio'] || ''}</td>
+                    <td>${nombreCompleto}</td>
+                    <td>${item.fields.Resultados || ''}</td>
+                `;
+            } else if (type === 'paciente') {
+                row = `
+                    <td>${item.fields.Nombre || ''}</td>
+                    <td>${item.fields.Apellido || ''}</td>
+                    <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
+                    <td>${item.fields.Teléfono || ''}</td>
+                    <td>${item.fields.Correo || ''}</td>
+                `;
+            }
 
-            row = `
-                <td>${nombreCompleto}</td>
-                <td>${fechaNacimiento}</td>
-                <td>${correo}</td>
-                <td>${telefono}</td>
-                <td>${cita.fecha}</td>
-                <td>${cita.hora}</td>
-                <td>${progreso}</td>
+            return `
+                <tr>
+                    ${row}
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${item.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
             `;
-        } else if (type === 'cita') {
-            const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
-            row = `
-                <td>${item.fields.Hora || ''}</td>
-                <td>${item.fields.Fecha || ''}</td>
-                <td>${nombreCompleto}</td>
-                <td>${item.fields.Notas || ''}</td>
-            `;
-        } else if (type === 'tratamiento') {
-            const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
-            row = `
-                <td>${item.fields.Progreso || ''}</td>
-                <td>${item.fields['Fecha de Inicio'] || ''}</td>
-                <td>${nombreCompleto}</td>
-                <td>${item.fields.Resultados || ''}</td>
-            `;
-        } else if (type === 'paciente') {
-            row = `
-                <td>${item.fields.Nombre || ''}</td>
-                <td>${item.fields.Apellido || ''}</td>
-                <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
-                <td>${item.fields.Teléfono || ''}</td>
-                <td>${item.fields.Correo || ''}</td>
-            `;
-        }
+        }).join('');
+    }
 
-        return `
-            <tr>
-                ${row}
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${item.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
 
     function showSection(sectionId) {
         document.querySelectorAll('.section').forEach(function(section) {
