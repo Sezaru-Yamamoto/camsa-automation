@@ -329,6 +329,15 @@
             const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
             return `
                 <tr>
+                    ${type === 'overview''? `
+                        <td>${item.fields.Nombre || ''}</td>
+                        <td>${item.fields.Apellido || ''}</td>
+                        <td>${item.fields.Correo || ''}</td>
+                        <td>${item.fields.Teléfono || ''}</td>
+                        <td>${item.fields.Fecha || ''}</td>
+                        <td>${item.fields.Hora || ''}</td>
+                        <td>${item.fields.Hora || ''}</td>
+                        ` : ''}
                     ${type === 'cita' ? `
                         <td>${item.fields.Hora || ''}</td>
                         <td>${item.fields.Fecha || ''}</td>
@@ -359,37 +368,7 @@
         }).join('');
     }
          
-function renderOverview(pacientes, citasMap, tratamientosMap) {
-    const tableBody = document.getElementById('overviewData');
-    tableBody.innerHTML = pacientes.map(paciente => {
-        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
-        const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
-        const correo = paciente.fields.Correo || '';
-        const telefono = paciente.fields.Teléfono || '';
 
-        // Encuentra las citas y tratamientos correspondientes
-        const citas = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
-        const tratamientos = Object.values(tratamientosMap).find(tratamiento => tratamiento.paciente === nombreCompleto) || {};
-
-        return `
-            <tr>
-                <td>${nombreCompleto}</td>
-                <td>${fechaNacimiento}</td>
-                <td>${correo}</td>
-                <td>${telefono}</td>
-                <td>${citas.fecha || 'No disponible'}</td>
-                <td>${citas.hora || 'No disponible'}</td>
-                 <td>${item.fields.Progreso || ''}</td>
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${paciente.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
 
    
 
