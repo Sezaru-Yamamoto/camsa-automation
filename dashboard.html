@@ -297,9 +297,8 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${pacienteNombre}</td>
-                <td>${pacienteNombre.split(' ')[1] || ''}</td>
-                <td>${pacienteDatos.correo}</td>
-                <td>${pacienteDatos.telefono}</td>
+                <td>${pacienteDatos.Correo}</td>
+                <td>${pacienteDatos.Teléfono}</td>
                 <td>${cita.fields.Fecha || ''}</td>
                 <td>${cita.fields.Hora || ''}</td>
                 <td>${tratamientos.find(tratamiento => tratamiento.fields.Cita === cita.id)?.fields.Progreso || ''}</td>
