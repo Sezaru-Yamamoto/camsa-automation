@@ -99,6 +99,7 @@
             padding: 20px;
             overflow-y: auto;
             background-color: #ecf0f1;
+            margin-left: 250px; /* Ajustado para dejar espacio para la barra lateral */
             transition: margin-left 0.3s ease;
         }
 
@@ -112,7 +113,7 @@
         }
 
         table {
-            width: 100%;
+            width: calc(100% - 270px); /* Ancho ajustado para dejar espacio para el menú */
             border-collapse: collapse;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -168,51 +169,52 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: 100%;
-                position: fixed;
-                top: 0;
-                left: -100%; /* Inicialmente oculto en móviles */
-                transition: transform 0.3s ease; /* Transición suave */
-            }
+    .sidebar {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: -100%; /* Inicialmente oculto */
+        transition: transform 0.3s ease; /* Transición suave */
+    }
 
-            .sidebar.show {
-                left: 0; /* Mostrar menú en móviles */
-                transform: translateX(0);
-            }
+    .sidebar.show {
+        transform: translateX(0); /* Mostrar el menú */
+    }
 
-            .menu-toggle {
-                display: block;
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                font-size: 24px;
-                cursor: pointer;
-                z-index: 1000;
-                color: #2c3e50;
-                background: white;
-                border: none;
-                padding: 10px;
-                border-radius: 50%;
-            }
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 1000;
+        color: #2c3e50;
+        background: white;
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+    }
 
-            .main-content {
-                margin-left: 0;
-            }
+    .main-content {
+        margin-left: 0; /* Ajustado para pantalla completa en móviles */
+    }
 
-            table {
-                font-size: 14px;
-                overflow-x: auto;
-                display: block;
-            }
+    table {
+        font-size: 14px;
+        overflow-x: auto;
+        display: block;
+        width: 100%; /* Ancho completo en móviles */
+    }
 
-            .table-container {
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
+    .table-container {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
     </style>
+
 </head>
 <body>
       <button class="menu-toggle">&#9776;</button>
@@ -324,8 +326,7 @@
         sessionStorage.removeItem('authenticated');
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
     });
-
-      // Manejo de la navegación del menú
+// Manejo de la navegación del menú
             document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
                 menuItem.addEventListener('click', function() {
                     const sectionId = this.getAttribute('data-section');
@@ -334,8 +335,21 @@
                         item.classList.remove('active');
                     });
                     this.classList.add('active');
+
+                    // Cerrar el menú en móviles al seleccionar una opción
+                    if (window.innerWidth <= 768) {
+                        document.querySelector('.sidebar').classList.remove('show');
+                    }
                 });
             });
+
+            function showSection(sectionId) {
+                document.querySelectorAll('.section').forEach(function(section) {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+            }
+
         
      document.getElementById('logoutButton').addEventListener('click', function() {
             sessionStorage.removeItem('authenticated');
@@ -359,11 +373,11 @@
         const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
 
         const fetchTableData = async (table) => {
-            const response = await fetch(${baseUrl}${table}, {
-                headers: { 'Authorization': Bearer ${apiKey} }
+            const response = await fetch(`${baseUrl}${table}`, {
+                headers: { 'Authorization': `Bearer ${apiKey}` }
             });
             if (!response.ok) {
-                console.error(Error fetching ${table}: ${response.statusText});
+                console.error(`Error fetching ${table}: ${response.statusText}`);
                 return [];
             }
             const data = await response.json();
@@ -385,7 +399,7 @@
             // Crear un mapeo de IDs de pacientes a nombres completos
             const pacientesMap = {};
             pacientes.forEach(paciente => {
-                const nombreCompleto = ${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''};
+                const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
                 pacientesMap[paciente.id] = nombreCompleto;
             });
 
@@ -415,7 +429,7 @@
     function renderOverview(pacientes, citasMap, tratamientos) {
         const tableBody = document.getElementById('overviewData');
         tableBody.innerHTML = pacientes.map(paciente => {
-            const nombreCompleto = ${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''};
+            const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
             const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
             const correo = paciente.fields.Correo || '';
             const telefono = paciente.fields.Teléfono || '';
@@ -424,7 +438,7 @@
             const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
             const progreso = tratamientos.find(tratamiento => tratamiento.fields.Paciente === paciente.id)?.fields.Progreso || '';
 
-            return 
+            return `
                 <tr>
                     <td>${nombreCompleto}</td>
                     <td>${fechaNacimiento}</td>
@@ -440,7 +454,7 @@
                         </div>
                     </td>
                 </tr>
-            ;
+            `;
         }).join('');
     }
 
@@ -448,27 +462,27 @@
         const tableBody = document.getElementById(tableId);
         tableBody.innerHTML = data.map(item => {
             const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
-            return 
+            return `
                 <tr>
-                    ${type === 'cita' ? 
+                    ${type === 'cita' ? `
                         <td>${item.fields.Hora || ''}</td>
                         <td>${item.fields.Fecha || ''}</td>
                         <td>${nombreCompleto}</td>
                         <td>${item.fields.Notas || ''}</td>
-                     : ''}
-                    ${type === 'tratamiento' ? 
+                    ` : ''}
+                    ${type === 'tratamiento' ? `
                         <td>${item.fields.Progreso || ''}</td>
                         <td>${item.fields['Fecha de Inicio'] || ''}</td>
                         <td>${nombreCompleto}</td>
                         <td>${item.fields.Resultados || ''}</td>
-                     : ''}
-                    ${type === 'paciente' ? 
+                    ` : ''}
+                    ${type === 'paciente' ? `
                         <td>${item.fields.Nombre || ''}</td>
                         <td>${item.fields.Apellido || ''}</td>
                         <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
                         <td>${item.fields.Teléfono || ''}</td>
                         <td>${item.fields.Correo || ''}</td>
-                     : ''}
+                    ` : ''}
                     <td>
                         <div class="actions">
                             <button class="update">Actualizar</button>
@@ -476,14 +490,10 @@
                         </div>
                     </td>
                 </tr>
-            ;
+            `;
         }).join('');
     }
         
-         document.querySelector('.menu-toggle').addEventListener('click', function() {
-        document.querySelector('.sidebar').classList.toggle('show');
-    });
-
     function showSection(sectionId) {
         document.querySelectorAll('.section').forEach(function(section) {
             section.classList.remove('active');
@@ -491,6 +501,10 @@
         document.getElementById(sectionId).classList.add('active');
     }
 
+
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('show');
+});
     </script>
 </body>
 </html>
