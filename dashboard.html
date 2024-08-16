@@ -300,6 +300,18 @@
                 };
             });
 
+               // Crear un mapeo de IDs de tratamientos a datos
+        const tratamientosMap = {};
+        tratamientos.forEach(tratamiento => {
+            const pacienteNombre = pacientesMap[tratamiento.fields.Paciente] || 'Nombre no disponible';
+            tratamientosMap[tratamiento.id] = {
+                progreso: tratamiento.fields.Progreso || 'No disponible',
+                fechaInicio: tratamiento.fields['Fecha de Inicio'] || '',
+                resultados: tratamiento.fields.Resultados || '',
+                paciente: pacienteNombre
+            };
+        });
+
             // Renderizar la tabla de Overview
             renderOverview(pacientes, citasMap, tratamientos);
 
@@ -312,24 +324,27 @@
         }
     }
 
- function renderOverview(pacientes, citasMap, tratamientos) {
+function renderOverview(pacientes, citasMap, tratamientosMap) {
     const tableBody = document.getElementById('overviewData');
     tableBody.innerHTML = pacientes.map(paciente => {
         const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
         const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
         const correo = paciente.fields.Correo || '';
         const telefono = paciente.fields.Teléfono || '';
-        const progreso = tratamiento.fields.Progreso || '';
-      
+
+        // Encuentra las citas y tratamientos correspondientes
+        const citas = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
+        const tratamientos = Object.values(tratamientosMap).find(tratamiento => tratamiento.paciente === nombreCompleto) || {};
+
         return `
             <tr>
                 <td>${nombreCompleto}</td>
                 <td>${fechaNacimiento}</td>
                 <td>${correo}</td>
                 <td>${telefono}</td>
-                <td>${citasData.fecha || ''}</td>
-                <td>${citasData.hora || ''}</td>
-                <td>${progreso}</td>
+                <td>${citas.fecha || 'No disponible'}</td>
+                <td>${citas.hora || 'No disponible'}</td>
+                <td>${tratamientos.progreso || 'No disponible'}</td>
                 <td>
                     <div class="actions">
                         <button class="update">Actualizar</button>
@@ -340,7 +355,6 @@
         `;
     }).join('');
 }
-
 
     function renderData(tableId, data, type, pacientesMap) {
         const tableBody = document.getElementById(tableId);
