@@ -413,7 +413,18 @@
             `;
         }).join('');
     }
-
+        
+     document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+            menuItem.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active'));
+                menuItem.classList.add('active');
+                
+                document.querySelectorAll('.section').forEach(function(section) {
+                    section.classList.remove('active');
+                });
+                document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
+            });
+         
     function showSection(sectionId) {
         document.querySelectorAll('.section').forEach(function(section) {
             section.classList.remove('active');
