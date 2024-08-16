@@ -67,7 +67,6 @@
         .main-content {
             flex-grow: 1;
             padding: 20px;
-            overflow-y: auto;
         }
 
         .section {
@@ -76,34 +75,6 @@
 
         .section.active {
             display: block;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table th, table td {
-            padding: 12px 15px;
-            text-align: left;
-        }
-
-        table th {
-            background-color: #2c3e50;
-            color: white;
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        table tbody tr:hover {
-            background-color: #e9f5ff;
         }
 
         .actions {
@@ -119,7 +90,6 @@
             padding: 5px 10px;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.3s ease;
         }
 
         .actions button:hover {
@@ -134,7 +104,6 @@
             background-color: #c0392b;
         }
     </style>
-    
 </head>
 <body>
     <div class="sidebar">
@@ -147,24 +116,7 @@
         </ul>
     </div>
 
-    <div class="main-content
-
-         <div id="overview" class="section"> <!-- Añadido -->
-        <h2>Overview</h2>
-        <table class="table" id="overviewTable">
-            <thead>
-                <tr>
-                    <th>Tabla</th>
-                    <th>Detalles</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="overviewData">
-                <!-- Aquí se llenarán los datos -->
-            </tbody>
-        </table>
-    </div>
-    
+    <div class="main-content">
         <!-- Sección para Pacientes -->
         <div id="pacientes" class="section">
             <h2>Pacientes</h2>
@@ -224,153 +176,102 @@
     </div>
 
     <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    if (sessionStorage.getItem('authenticated') !== 'true') {
-        window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-    } else { 
-        fetchData();
-        showSection('overview'); // Cambiar 'pacientes' a 'overview'
-    }
-});
-
-document.getElementById('logoutButton').addEventListener('click', function() {
-    sessionStorage.removeItem('authenticated');
-    window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-});
-
-document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
-    menuItem.addEventListener('click', function() {
-        document.querySelectorAll('.section').forEach(function(section) {
-            section.classList.remove('active');
-        });
-        document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
-    });
-});
-
-async function fetchData() {
-    const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
-    const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
-
-    const fetchTableData = async (table) => {
-        const response = await fetch(`${baseUrl}${table}`, {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
-        });
-        const data = await response.json();
-        return data.records;
-    };
-
-    const [pacientes, citas, tratamientos] = await Promise.all([
-        fetchTableData('Pacientes'),
-        fetchTableData('Citas'),
-        fetchTableData('Tratamientos'),
-    ]);
-
-    const pacientesMap = {};
-    pacientes.forEach(paciente => {
-        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
-        pacientesMap[paciente.id] = nombreCompleto;
-    });
-
-    renderData('pacientesData', pacientes);
-    renderData('citasData', citas, 'cita');
-    renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
-    renderOverviewData(pacientes, citas, tratamientos, pacientesMap); // Llamar a renderOverviewData
-}
-
-function renderData(elementId, data, type, pacientesMap = {}) {
-    const tableBody = document.getElementById(elementId);
-    tableBody.innerHTML = data.map(record => {
-        if (type === 'cita') {
-            return `
-                <tr>
-                    <td>${record.fields.Hora || ''}</td>
-                    <td>${record.fields.Fecha || ''}</td>
-                    <td>${record.fields.Notas || ''}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${record.id}">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        } else if (type === 'tratamiento') {
-            const pacienteNombre = pacientesMap[record.fields.Paciente] || 'Paciente desconocido';
-            return `
-                <tr>
-                    <td>${record.fields.Progreso || ''}</td>
-                    <td>${record.fields['Fecha de Inicio'] || ''}</td>
-                    <td>${pacienteNombre}</td>
-                    <td>${record.fields.Resultados || ''}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${record.id}">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+    document.addEventListener('DOMContentLoaded', function() {
+        if (sessionStorage.getItem('authenticated') !== 'true') {
+            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
         } else {
-            return `
-                <tr>
-                    <td>${record.fields.Nombre || ''}</td>
-                    <td>${record.fields.Apellido || ''}</td>
-                    <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
-                    <td>${record.fields.Teléfono || ''}</td>
-                    <td>${record.fields.Correo || ''}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${record.id}">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            fetchData();
         }
-    }).join('');
-}
+    });
 
-function renderOverviewData(pacientes, citas, tratamientos, pacientesMap) {
-    const tableBody = document.getElementById('overviewData');
-    tableBody.innerHTML = `
-        ${pacientes.map(paciente => `
-            <tr>
-                <td>Paciente</td>
-                <td>${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}</td>
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${paciente.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('')}
-        ${citas.map(cita => `
-            <tr>
-                <td>Cita</td>
-                <td>${cita.fields.Fecha || ''} a las ${cita.fields.Hora || ''} - ${cita.fields.Notas || ''}</td>
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${cita.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('')}
-        ${tratamientos.map(tratamiento => `
-            <tr>
-                <td>Tratamiento</td>
-                <td>${pacientesMap[tratamiento.fields.Paciente] || 'Paciente desconocido'} - Progreso: ${tratamiento.fields.Progreso || ''}</td>
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${tratamiento.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('')}
-    `;
-}
+    document.getElementById('logoutButton').addEventListener('click', function() {
+        sessionStorage.removeItem('authenticated');
+        window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+    });
 
+    document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+        menuItem.addEventListener('click', function() {
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
+        });
+    });
+
+    async function fetchData() {
+        const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
+        const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
+
+        const fetchTableData = async (table) => {
+            const response = await fetch(`${baseUrl}${table}`, {
+                headers: { 'Authorization': `Bearer ${apiKey}` }
+            });
+            const data = await response.json();
+            return data.records;
+        };
+
+        const [pacientes, citas, tratamientos] = await Promise.all([
+            fetchTableData('Pacientes'),
+            fetchTableData('Citas'),
+            fetchTableData('Tratamientos'),
+        ]);
+
+        renderData('pacientesData', pacientes);
+        renderData('citasData', citas, 'cita');
+        renderData('tratamientosData', tratamientos, 'tratamiento');
+    }
+
+    function renderData(elementId, data, type) {
+        const tableBody = document.getElementById(elementId);
+        tableBody.innerHTML = data.map(record => {
+            if (type === 'cita') {
+                return `
+                    <tr>
+                        <td>${record.fields.Hora || ''}</td>
+                        <td>${record.fields.Fecha || ''}</td>
+                        <td>${record.fields.Motivo || ''}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="update">Actualizar</button>
+                                <button class="delete" data-id="${record.id}">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else if (type === 'tratamiento') {
+                return `
+                    <tr>
+                        <td>${record.fields.Progreso || ''}</td>
+                        <td>${record.fields['Fecha de Inicio'] || ''}</td>
+                        <td>${record.fields.Paciente || ''}</td>
+                        <td>${record.fields.Resultados || ''}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="update">Actualizar</button>
+                                <button class="delete" data-id="${record.id}">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                return `
+                    <tr>
+                        <td>${record.fields.Nombre || ''}</td>
+                        <td>${record.fields.Apellido || ''}</td>
+                        <td>${record.fields['Fecha de Nacimiento'] || ''}</td>
+                        <td>${record.fields.Telefono || ''}</td>
+                        <td>${record.fields.Correo || ''}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="update">Actualizar</button>
+                                <button class="delete" data-id="${record.id}">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }).join('');
+    }
+    </script>
 </body>
 </html>
