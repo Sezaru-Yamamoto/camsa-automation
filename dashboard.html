@@ -323,40 +323,7 @@
             console.error('Error fetching data:', error);
         }
     }
-
-function renderOverview(pacientes, citasMap, tratamientosMap) {
-    const tableBody = document.getElementById('overviewData');
-    tableBody.innerHTML = pacientes.map(paciente => {
-        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
-        const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
-        const correo = paciente.fields.Correo || '';
-        const telefono = paciente.fields.Teléfono || '';
-
-        // Encuentra las citas y tratamientos correspondientes
-        const citas = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
-        const tratamientos = Object.values(tratamientosMap).find(tratamiento => tratamiento.paciente === nombreCompleto) || {};
-
-        return `
-            <tr>
-                <td>${nombreCompleto}</td>
-                <td>${fechaNacimiento}</td>
-                <td>${correo}</td>
-                <td>${telefono}</td>
-                <td>${citas.fecha || 'No disponible'}</td>
-                <td>${citas.hora || 'No disponible'}</td>
-                <td>${tratamientos.progreso || 'No disponible'}</td>
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${paciente.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-    function renderData(tableId, data, type, pacientesMap) {
+ function renderData(tableId, data, type, pacientesMap) {
         const tableBody = document.getElementById(tableId);
         tableBody.innerHTML = data.map(item => {
             const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
@@ -391,6 +358,40 @@ function renderOverview(pacientes, citasMap, tratamientosMap) {
             `;
         }).join('');
     }
+         
+function renderOverview(pacientes, citasMap, tratamientosMap) {
+    const tableBody = document.getElementById('overviewData');
+    tableBody.innerHTML = pacientes.map(paciente => {
+        const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+        const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
+        const correo = paciente.fields.Correo || '';
+        const telefono = paciente.fields.Teléfono || '';
+
+        // Encuentra las citas y tratamientos correspondientes
+        const citas = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
+        const tratamientos = Object.values(tratamientosMap).find(tratamiento => tratamiento.paciente === nombreCompleto) || {};
+
+        return `
+            <tr>
+                <td>${nombreCompleto}</td>
+                <td>${fechaNacimiento}</td>
+                <td>${correo}</td>
+                <td>${telefono}</td>
+                <td>${citas.fecha || 'No disponible'}</td>
+                <td>${citas.hora || 'No disponible'}</td>
+                <td>${tratamientos.progreso || 'No disponible'}</td>
+                <td>
+                    <div class="actions">
+                        <button class="update">Actualizar</button>
+                        <button class="delete" data-id="${paciente.id}">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+   
 
     function showSection(sectionId) {
         document.querySelectorAll('.section').forEach(function(section) {
