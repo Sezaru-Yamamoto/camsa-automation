@@ -323,6 +323,10 @@
         // Buscar citas y progresos asociados al paciente
         const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
         const progreso = tratamientos.find(tratamiento => tratamiento.fields.Paciente === paciente.id)?.fields.Progreso || 'No disponible';
+        console.log('Tratamientos:', tratamientos);
+        console.log('Tratamientos IDs de Pacientes:', tratamientos.map(tratamiento => tratamiento.fields.Paciente));
+        console.log('Pacientes IDs:', pacientes.map(paciente => paciente.id));
+        console.log('IDs de Pacientes en Tratamientos:', tratamientos.map(tratamiento => tratamiento.fields.Paciente));
         console.log('Progreso:', progreso); // Verifica los valores de progreso
         
         return `
