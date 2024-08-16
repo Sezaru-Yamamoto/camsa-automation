@@ -6,7 +6,7 @@
     <title>Dashboard Clínica</title>
        <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <style>
+   <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
@@ -28,7 +28,8 @@
             left: 0; /* Menú visible en modo computadora */
             height: 100%;
             overflow-y: auto;
-            transition: transform 0.3s ease; /* Transición suave */
+            transition: transform 0.3s ease-in-out; /* Transición suave */
+            transform: translateX(0); /* Inicialmente visible */
         }
 
         .sidebar.hide {
@@ -104,7 +105,7 @@
             overflow-y: auto;
             background-color: #ecf0f1;
             margin-left: 250px; /* Espacio para el menú */
-            transition: margin-left 0.3s ease;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         .section {
@@ -179,7 +180,7 @@
                 position: fixed;
                 top: 0;
                 left: -100%; /* Inicialmente oculto en móviles */
-                transition: transform 8s ease; /* Transición suave */
+                transition: transform 0.3s ease-in-out; /* Transición suave */
             }
 
             .sidebar.show {
@@ -195,8 +196,8 @@
                 font-size: 24px;
                 cursor: pointer;
                 z-index: 1000;
-                color: #2c3e50;
-                background: white;
+                color: white; /* Cambiar color del ícono del menú a blanco */
+                background: #2c3e50; /* Color del menú */
                 border: none;
                 padding: 10px;
                 border-radius: 50%;
@@ -204,11 +205,12 @@
 
             .main-content {
                 margin-left: 0;
+                padding: 10px;
             }
 
             table {
                 font-size: 14px;
-                width: 100%; /* Ancho completo en modo móvil */
+                width: calc(100% - 20px); /* Ancho más amplio en modo móvil */
                 overflow-x: auto;
                 display: block;
             }
@@ -216,6 +218,11 @@
             .table-container {
                 overflow-x: auto;
                 white-space: nowrap;
+                padding: 0;
+            }
+
+            table, th, td {
+                border: 1px solid #ddd; /* Reducir bordes */
             }
         }
     </style>
