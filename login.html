@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <title>Login - Dashboard</title>
     <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-   <style>
+    <style>
         body {
             font-family: 'Roboto', sans-serif;
             display: flex;
@@ -15,6 +15,7 @@
             height: 100vh;
             background-color: #f4f4f4;
             margin: 0;
+            padding: 0;
         }
 
         .login-container {
@@ -26,6 +27,13 @@
             width: 100%;
             box-sizing: border-box;
             position: relative;
+        }
+
+        .login-container img {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 100px;
+            height: auto;
         }
 
         .login-container h2 {
@@ -62,6 +70,21 @@
             background-color: #34495e;
         }
 
+        .show-password {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .show-password input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .show-password label {
+            font-size: 14px;
+            color: #555;
+        }
+
         .error-message {
             color: red;
             text-align: center;
@@ -69,72 +92,40 @@
             display: none;
         }
 
-        .show-password {
-            display: flex;
-            align-items: center;
-            margin-top: -10px;
-            margin-bottom: 15px;
-        }
-
-        .show-password input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        .login-logo {
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px; /* Ajustar el tamaño del logo */
-        }
-
         @media (max-width: 600px) {
             .login-container {
                 padding: 20px;
-                width: 90%;
+                max-width: 90%;
             }
 
             .login-container h2 {
                 font-size: 20px;
             }
 
+            .login-container input[type="text"],
+            .login-container input[type="password"] {
+                font-size: 14px;
+                padding: 8px;
+            }
+
             .login-container input[type="submit"] {
                 font-size: 14px;
-            }
-
-            .login-logo {
-                width: 100px; /* Ajustar el tamaño del logo en pantallas pequeñas */
-                top: -50px; /* Ajustar la posición del logo */
-            }
-        }
-
-        @media (max-width: 400px) {
-            .login-container h2 {
-                font-size: 18px;
-            }
-
-            .login-container input[type="submit"] {
                 padding: 10px;
-                font-size: 14px;
-            }
-
-            .login-logo {
-                width: 80px; /* Ajustar aún más el tamaño del logo */
-                top: -40px; /* Ajustar la posición del logo */
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <img src="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" alt="Logo" class="login-logo"> 
+        <img src="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" alt="Logo">
         <h2>Iniciar Sesión</h2>
         <form id="loginForm">
             <input type="text" id="username" placeholder="Usuario" required>
-            <div class="show-password">
-                <input type="checkbox" id="showPassword"> <label for="showPassword">Mostrar Contraseña</label>
-            </div>
             <input type="password" id="password" placeholder="Contraseña" required>
+            <div class="show-password">
+                <input type="checkbox" id="showPassword">
+                <label for="showPassword">Mostrar contraseña</label>
+            </div>
             <input type="submit" value="Acceder">
         </form>
         <div id="errorMessage" class="error-message">Credenciales incorrectas, intente nuevamente.</div>
@@ -167,12 +158,8 @@
         });
 
         document.getElementById('showPassword').addEventListener('change', function() {
-            const passwordField = document.getElementById('password');
-            if (this.checked) {
-                passwordField.type = 'text';
-            } else {
-                passwordField.type = 'password';
-            }
+            const passwordInput = document.getElementById('password');
+            passwordInput.type = this.checked ? 'text' : 'password';
         });
     </script>
 </body>
