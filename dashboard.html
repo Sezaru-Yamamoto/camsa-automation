@@ -253,11 +253,12 @@
         pacientes.forEach(paciente => {
         const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
         pacientesMap[paciente.id] = nombreCompleto;
-    });
-
+        });
+        
+        // Pasar pacientesMap a renderData para citas y tratamientos
         renderData('pacientesData', pacientes);
-        renderData('citasData', citas, 'cita');
-        renderData('tratamientosData', tratamientos, 'tratamiento');
+        renderData('citasData', citas, 'cita', pacientesMap);
+        renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
     }
 
     function renderData(elementId, data, type, pacientesMap = {}) {
@@ -269,7 +270,7 @@
                 <tr>
                     <td>${record.fields.Hora || ''}</td>
                     <td>${record.fields.Fecha || ''}</td>
-                    <td>${pacienteNombre}</td>
+                    <td>${pacienteNombre || 'Nombre no disponible'}</td>
                     <td>${record.fields.Notas || ''}</td>
                     <td>
                         <div class="actions">
@@ -285,7 +286,7 @@
                 <tr>
                     <td>${record.fields.Progreso || ''}</td>
                     <td>${record.fields['Fecha de Inicio'] || ''}</td>
-                    <td>${pacienteNombre}</td>
+                    <td>${pacienteNombre || 'Nombre no disponible'}</td>
                     <td>${record.fields.Resultados || ''}</td>
                     <td>
                         <div class="actions">
@@ -314,6 +315,7 @@
         }
     }).join('');
 }
+
     </script>
 </body>
 </html>
