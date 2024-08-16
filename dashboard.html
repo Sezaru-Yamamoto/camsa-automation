@@ -147,7 +147,24 @@
         </ul>
     </div>
 
-    <div class="main-content">
+    <div class="main-content
+
+         <div id="overview" class="section"> <!-- Añadido -->
+        <h2>Overview</h2>
+        <table class="table" id="overviewTable">
+            <thead>
+                <tr>
+                    <th>Tabla</th>
+                    <th>Detalles</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="overviewData">
+                <!-- Aquí se llenarán los datos -->
+            </tbody>
+        </table>
+    </div>
+    
         <!-- Sección para Pacientes -->
         <div id="pacientes" class="section">
             <h2>Pacientes</h2>
@@ -207,30 +224,30 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (sessionStorage.getItem('authenticated') !== 'true') {
-            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-        } else { 
-            fetchData();
-            showSection('pacientes');
-        }
-    });
-
-    document.getElementById('logoutButton').addEventListener('click', function() {
-        sessionStorage.removeItem('authenticated');
+   document.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('authenticated') !== 'true') {
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-    });
+    } else { 
+        fetchData();
+        showSection('overview'); // Cambiar 'pacientes' a 'overview'
+    }
+});
 
-         document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
-        menuItem.addEventListener('click', function() {
-            document.querySelectorAll('.section').forEach(function(section) {
-                section.classList.remove('active');
-            });
-            document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
+document.getElementById('logoutButton').addEventListener('click', function() {
+    sessionStorage.removeItem('authenticated');
+    window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+});
+
+document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+    menuItem.addEventListener('click', function() {
+        document.querySelectorAll('.section').forEach(function(section) {
+            section.classList.remove('active');
         });
+        document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
     });
-        
-   async function fetchData() {
+});
+
+async function fetchData() {
     const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
     const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
 
@@ -248,7 +265,6 @@
         fetchTableData('Tratamientos'),
     ]);
 
-    // Crear un mapeo de IDs de pacientes a nombres completos
     const pacientesMap = {};
     pacientes.forEach(paciente => {
         const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
@@ -258,9 +274,10 @@
     renderData('pacientesData', pacientes);
     renderData('citasData', citas, 'cita');
     renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
+    renderOverviewData(pacientes, citas, tratamientos, pacientesMap); // Llamar a renderOverviewData
 }
 
-   function renderData(elementId, data, type, pacientesMap = {}) {
+function renderData(elementId, data, type, pacientesMap = {}) {
     const tableBody = document.getElementById(elementId);
     tableBody.innerHTML = data.map(record => {
         if (type === 'cita') {
@@ -312,6 +329,48 @@
         }
     }).join('');
 }
-    </script>
+
+function renderOverviewData(pacientes, citas, tratamientos, pacientesMap) {
+    const tableBody = document.getElementById('overviewData');
+    tableBody.innerHTML = `
+        ${pacientes.map(paciente => `
+            <tr>
+                <td>Paciente</td>
+                <td>${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}</td>
+                <td>
+                    <div class="actions">
+                        <button class="update">Actualizar</button>
+                        <button class="delete" data-id="${paciente.id}">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('')}
+        ${citas.map(cita => `
+            <tr>
+                <td>Cita</td>
+                <td>${cita.fields.Fecha || ''} a las ${cita.fields.Hora || ''} - ${cita.fields.Notas || ''}</td>
+                <td>
+                    <div class="actions">
+                        <button class="update">Actualizar</button>
+                        <button class="delete" data-id="${cita.id}">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('')}
+        ${tratamientos.map(tratamiento => `
+            <tr>
+                <td>Tratamiento</td>
+                <td>${pacientesMap[tratamiento.fields.Paciente] || 'Paciente desconocido'} - Progreso: ${tratamiento.fields.Progreso || ''}</td>
+                <td>
+                    <div class="actions">
+                        <button class="update">Actualizar</button>
+                        <button class="delete" data-id="${tratamiento.id}">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('')}
+    `;
+}
+
 </body>
 </html>
