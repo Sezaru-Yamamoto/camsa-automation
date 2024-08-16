@@ -6,7 +6,7 @@
     <title>Dashboard Clínica</title>
        <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-   <style>
+  <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
@@ -25,14 +25,14 @@
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             position: fixed;
             top: 0;
-            left: -250px; /* Inicialmente oculto */
+            left: 0; /* Menú visible en modo computadora */
             height: 100%;
             overflow-y: auto;
-            transition: left 0.3s ease; /* Transición suave */
+            transition: transform 0.3s ease; /* Transición suave */
         }
 
-        .sidebar.show {
-            left: 0; /* Mostrar menú */
+        .sidebar.hide {
+            transform: translateX(-100%); /* Ocultar el menú moviéndolo fuera de la vista */
         }
 
         .sidebar img {
@@ -173,12 +173,13 @@
                 height: 100%;
                 position: fixed;
                 top: 0;
-                left: -100%; /* Inicialmente oculto */
-                transition: left 0.3s ease; /* Transición suave */
+                left: -100%; /* Inicialmente oculto en móviles */
+                transition: transform 0.3s ease; /* Transición suave */
             }
 
             .sidebar.show {
-                left: 0; /* Mostrar menú */
+                left: 0; /* Mostrar menú en móviles */
+                transform: translateX(0);
             }
 
             .menu-toggle {
@@ -325,13 +326,15 @@
     });
 
     document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
-        menuItem.addEventListener('click', function() {
-            document.querySelectorAll('.section').forEach(function(section) {
-                section.classList.remove('active');
+                menuItem.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                    document.querySelectorAll('.sidebar ul li').forEach(function(item) {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
             });
-            document.getElementById(menuItem.getAttribute('data-section')).classList.add('active');
-        });
-    });
 
      document.getElementById('logoutButton').addEventListener('click', function() {
             sessionStorage.removeItem('authenticated');
