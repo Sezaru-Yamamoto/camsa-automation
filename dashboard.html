@@ -6,7 +6,7 @@
     <title>Dashboard Clínica</title>
        <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
+     <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
@@ -33,6 +33,10 @@
 
         .sidebar.hide {
             transform: translateX(-100%); /* Ocultar el menú moviéndolo fuera de la vista */
+        }
+
+        .sidebar.show {
+            transform: translateX(0); /* Mostrar el menú moviéndolo a su posición original */
         }
 
         .sidebar img {
@@ -99,7 +103,7 @@
             padding: 20px;
             overflow-y: auto;
             background-color: #ecf0f1;
-            margin-left: 250px; /* Ajustado para dejar espacio para la barra lateral */
+            margin-left: 250px; /* Espacio para el menú */
             transition: margin-left 0.3s ease;
         }
 
@@ -113,7 +117,7 @@
         }
 
         table {
-            width: calc(100% - 270px); /* Ancho ajustado para dejar espacio para el menú */
+            width: calc(100% - 30px); /* Ajustar el ancho de la tabla */
             border-collapse: collapse;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -169,51 +173,51 @@
         }
 
         @media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: -100%; /* Inicialmente oculto */
-        transition: transform 0.3s ease; /* Transición suave */
-    }
+            .sidebar {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%; /* Inicialmente oculto en móviles */
+                transition: transform 0.3s ease; /* Transición suave */
+            }
 
-    .sidebar.show {
-        transform: translateX(0); /* Mostrar el menú */
-        z-index: 1000;
-    }
+            .sidebar.show {
+                left: 0; /* Mostrar menú en móviles */
+                transform: translateX(0);
+            }
 
-    .menu-toggle {
-        display: block;
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        font-size: 24px;
-        cursor: pointer;
-        z-index: 1001;
-        color: #2c3e50;
-        background: white;
-        border: none;
-        padding: 10px;
-        border-radius: 50%;
-    }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                font-size: 24px;
+                cursor: pointer;
+                z-index: 1000;
+                color: #2c3e50;
+                background: white;
+                border: none;
+                padding: 10px;
+                border-radius: 50%;
+            }
 
-    .main-content {
-        margin-left: 0; /* Ajustado para pantalla completa en móviles */
-    }
+            .main-content {
+                margin-left: 0;
+            }
 
-    table {
-        font-size: 14px;
-        overflow-x: auto;
-        display: block;
-        width: 100%; /* Ancho completo en móviles */
-    }
+            table {
+                font-size: 14px;
+                width: 100%; /* Ancho completo en modo móvil */
+                overflow-x: auto;
+                display: block;
+            }
 
-    .table-container {
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-}
+            .table-container {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
     </style>
 
 </head>
@@ -327,7 +331,8 @@
         sessionStorage.removeItem('authenticated');
         window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
     });
-// Manejo de la navegación del menú
+        
+ // Manejo de la navegación del menú
             document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
                 menuItem.addEventListener('click', function() {
                     const sectionId = this.getAttribute('data-section');
@@ -343,7 +348,6 @@
                     }
                 });
             });
-
             function showSection(sectionId) {
                 document.querySelectorAll('.section').forEach(function(section) {
                     section.classList.remove('active');
@@ -494,18 +498,16 @@
             `;
         }).join('');
     }
-        
-    function showSection(sectionId) {
-        document.querySelectorAll('.section').forEach(function(section) {
-            section.classList.remove('active');
+
+        // Manejo del botón de menú en dispositivos móviles
+            document.querySelector('.menu-toggle').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('show');
+            });
         });
-        document.getElementById(sectionId).classList.add('active');
-    }
+        
+   
 
 
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-    document.querySelector('.sidebar').classList.toggle('show');
-});
     </script>
 </body>
 </html>
