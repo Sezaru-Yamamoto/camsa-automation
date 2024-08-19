@@ -17,114 +17,54 @@
             overflow: hidden;
         }
 
-        .sidebar {
-            width: 250px;
-            background-color: #2c3e50;
-            color: white;
-            padding-top: 20px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            position: fixed;
-            top: 0;
-            left: 0; /* Menú visible en modo computadora */
-            height: 100%;
-            overflow-y: auto;
-            transition: transform 0.3s ease; /* Transición suave */
-        }
+       .sidebar {
+    width: 200px; /* Reduce el ancho de la barra lateral */
+    background-color: #2c3e50;
+    color: white;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 0; /* Menú visible en modo computadora */
+    height: 100%;
+    overflow-y: auto;
+    transition: transform 0.3s ease; /* Transición suave */
+}
 
-        .sidebar.hide {
-            transform: translateX(-100%); /* Ocultar el menú moviéndolo fuera de la vista */
-        }
+.sidebar img {
+    width: 80px; /* Ajusta el tamaño del logo */
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+}
 
-        .sidebar img {
-            width: 100px;
-            height: auto;
-            display: block;
-            margin: 0 auto 20px;
-        }
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px; /* Reduce el tamaño del texto del título */
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
+.sidebar ul li {
+    padding: 10px; /* Ajusta el padding de los elementos del menú */
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+}
 
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #ecf0f1;
+    margin-left: 200px; /* Alinea el contenido principal con la barra lateral más angosta */
+    transition: margin-left 0.3s ease;
+}
 
-        .sidebar ul li {
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border-radius: 5px;
-        }
-
-        .sidebar ul li.active {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .sidebar ul li:hover {
-            background-color: #34495e;
-        }
-
-        .menu-toggle {
-            display: none;
-        }
-
-        #logoutButton {
-            display: block;
-            width: 80%;
-            padding: 10px;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-            margin: 20px auto 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        #logoutButton:hover {
-            background-color: #c0392b;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #ecf0f1;
-            transition: margin-left 0.3s ease;
-        }
-
-        .section {
-            display: none;
-            padding: 20px;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        table {
-            width: calc(100% - 80px);
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-       table th, table td {
-            padding: 8px 10px; /* Reduce el padding de las celdas */
-            text-align: left;
-            font-size: 14px; /* Reduce el tamaño de la fuente en las tablas */
+table th, table td {
+    padding: 8px 10px; /* Reduce el padding de las celdas */
+    text-align: left;
+    font-size: 14px; /* Reduce el tamaño de la fuente en las tablas */
 }
 
         table th {
