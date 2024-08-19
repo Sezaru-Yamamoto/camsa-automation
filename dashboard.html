@@ -405,16 +405,16 @@ table tbody tr:hover {
         }
     }
 
-    function renderOverview(pacientes, citasMap, tratamientos) {
+     function renderOverview(pacientes, citasMap, tratamientos) {
         const tableBody = document.getElementById('overviewData');
         tableBody.innerHTML = pacientes.map(paciente => {
             const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
             const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
             const correo = paciente.fields.Correo || '';
-            const telefono = paciente.fields.Teléfono || '';
-            
-            // Buscar citas y progresos asociados al paciente
-            const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
+            const telefono = paciente.fields.Telefono || '';
+            const cita = citasMap[paciente.id] || {};
+            const fechaCita = cita.fecha || 'Sin cita';
+            const horaCita = cita.hora || 'Sin cita';
 
             return `
                 <tr>
@@ -422,54 +422,57 @@ table tbody tr:hover {
                     <td>${fechaNacimiento}</td>
                     <td>${correo}</td>
                     <td>${telefono}</td>
-                    <td>${citasData.fecha || ''}</td>
-                    <td>${citasData.hora || ''}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${paciente.id}">Eliminar</button>
-                        </div>
+                    <td>${fechaCita}</td>
+                    <td>${horaCita}</td>
+                    <td class="actions">
+                        <button onclick="editRecord('${paciente.id}', 'paciente')">Editar</button>
+                        <button class="delete" onclick="deleteRecord('${paciente.id}', 'paciente')">Eliminar</button>
                     </td>
                 </tr>
             `;
         }).join('');
     }
 
-    function renderData(tableId, data, type, pacientesMap) {
-        const tableBody = document.getElementById(tableId);
+    function renderData(elementId, data, type, pacientesMap = {}) {
+        const tableBody = document.getElementById(elementId);
         tableBody.innerHTML = data.map(item => {
-            const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
+            let rowContent = '';
+            if (type === 'paciente') {
+                rowContent = `
+                    <td>${item.fields.Nombre || ''}</td>
+                    <td>${item.fields.Apellido || ''}</td>
+                    <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
+                    <td>${item.fields.Telefono || ''}</td>
+                    <td>${item.fields.Correo || ''}</td>
+                `;
+            } else if (type === 'cita') {
+                rowContent = `
+                    <td>${item.fields.Hora || ''}</td>
+                    <td>${item.fields.Fecha || ''}</td>
+                    <td>${pacientesMap[item.fields.Paciente] || 'Nombre no disponible'}</td>
+                    <td>${item.fields.Motivo || ''}</td>
+                `;
+            } else if (type === 'tratamiento') {
+                rowContent = `
+                    <td>${item.fields.Progreso || ''}</td>
+                    <td>${item.fields['Fecha de Inicio'] || ''}</td>
+                    <td>${pacientesMap[item.fields.Paciente] || 'Nombre no disponible'}</td>
+                    <td>${item.fields.Resultados || ''}</td>
+                `;
+            }
+
             return `
                 <tr>
-                    ${type === 'cita' ? `
-                        <td>${item.fields.Hora || ''}</td>
-                        <td>${item.fields.Fecha || ''}</td>
-                        <td>${nombreCompleto}</td>
-                        <td>${item.fields.Notas || ''}</td>
-                    ` : ''}
-                    ${type === 'tratamiento' ? `
-                        <td>${item.fields.Progreso || ''}</td>
-                        <td>${item.fields['Fecha de Inicio'] || ''}</td>
-                        <td>${nombreCompleto}</td>
-                        <td>${item.fields.Resultados || ''}</td>
-                    ` : ''}
-                    ${type === 'paciente' ? `
-                        <td>${item.fields.Nombre || ''}</td>
-                        <td>${item.fields.Apellido || ''}</td>
-                        <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
-                        <td>${item.fields.Teléfono || ''}</td>
-                        <td>${item.fields.Correo || ''}</td>
-                    ` : ''}
-                    <td>
-                        <div class="actions">
-                            <button class="update">Actualizar</button>
-                            <button class="delete" data-id="${item.id}">Eliminar</button>
-                        </div>
+                    ${rowContent}
+                    <td class="actions">
+                        <button onclick="editRecord('${item.id}', '${type}')">Editar</button>
+                        <button class="delete" onclick="deleteRecord('${item.id}', '${type}')">Eliminar</button>
                     </td>
                 </tr>
             `;
         }).join('');
     }
+
         
          document.querySelector('.menu-toggle').addEventListener('click', function() {
         document.querySelector('.sidebar').classList.toggle('show');
