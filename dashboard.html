@@ -235,6 +235,7 @@ table tbody tr:hover {
     </div>
 
     <div class="main-content">
+        
         <!-- Sección para Overview -->
         <div id="overview" class="section">
             <h2>Overview</h2>
@@ -247,7 +248,6 @@ table tbody tr:hover {
                         <th>Teléfono</th>
                         <th>Fecha de la cita</th>
                         <th>Hora de la cita</th>
-                        <th>Progreso</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -317,6 +317,7 @@ table tbody tr:hover {
     </div>
 
     <script>
+        //Autenticación
        document.addEventListener('DOMContentLoaded', function() {
         if (sessionStorage.getItem('authenticated') !== 'true') {
             window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
@@ -325,11 +326,12 @@ table tbody tr:hover {
             showSection('overview');
         }
     });
-
-    document.getElementById('logoutButton').addEventListener('click', function() {
-        sessionStorage.removeItem('authenticated');
-        window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-    });
+        
+        //Cierre de sesión
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            sessionStorage.removeItem('authenticated');
+            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+        });
 
       // Manejo de la navegación del menú
             document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
@@ -342,24 +344,8 @@ table tbody tr:hover {
                     this.classList.add('active');
                 });
             });
-        
-     document.getElementById('logoutButton').addEventListener('click', function() {
-            sessionStorage.removeItem('authenticated');
-            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
-        });
-
-        document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
-                menuItem.addEventListener('click', function() {
-                    const sectionId = this.getAttribute('data-section');
-                    showSection(sectionId);
-                    document.querySelectorAll('.sidebar ul li').forEach(function(item) {
-                        item.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                });
-            });
-
-        
+    
+     //Manejo de datos de airtable
     async function fetchData() {
         const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
         const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
@@ -428,7 +414,6 @@ table tbody tr:hover {
             
             // Buscar citas y progresos asociados al paciente
             const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
-            const progreso = tratamientos.find(tratamiento => tratamiento.fields.Paciente === paciente.id)?.fields.Progreso || '';
 
             return `
                 <tr>
@@ -438,7 +423,6 @@ table tbody tr:hover {
                     <td>${telefono}</td>
                     <td>${citasData.fecha || ''}</td>
                     <td>${citasData.hora || ''}</td>
-                    <td>${progreso || ''}</td>
                     <td>
                         <div class="actions">
                             <button class="update">Actualizar</button>
