@@ -117,7 +117,8 @@
 }
 
 table {
-    width: 100%;
+    width: 90%; /* salvaguarda para navegadores que no reconocen calc() */
+    width: calc(100% - 80px);
     border-collapse: collapse;
     margin-bottom: 20px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
