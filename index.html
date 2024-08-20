@@ -40,9 +40,13 @@
             max-width: 400px;
             width: 100%;
             box-sizing: border-box;
+            /* Flexbox para centrar el contenido */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-      .form-container img {
+        .form-container img {
             max-width: 90px;
             display: block;
             margin: 0 auto 20px;
@@ -137,7 +141,43 @@
 
         .confirmation-box button:hover {
             background-color: #555;
-        } 
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input[type="submit"] {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-container {
+                padding: 10px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            input[type="submit"] {
+                font-size: 12px;
+            }
+
+            .form-container img {
+                max-width: 70px;
+            }
+        }
     </style>
 </head>
 <body>
