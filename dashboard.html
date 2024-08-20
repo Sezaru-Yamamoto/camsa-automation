@@ -118,60 +118,6 @@
     -webkit-overflow-scrolling: touch; /* Mejora el desplazamiento en dispositivos iOS */
 }
 
-        /* Estilos para el modal */
-.modal {
-    display: none; /* Oculto por defecto */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-
 table {
     width: 100%; /* Hace que la tabla tome el ancho completo del contenedor */
     min-width: 600px; /* Establece un ancho mínimo para la tabla, ajusta según el contenido */
@@ -369,31 +315,6 @@ table th, table td {
         </div>
     </div>
 
-        <!-- Modal para Editar -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Editar Registro</h2>
-            <form id="editForm">
-                <div class="form-group">
-                    <label for="editField1">Campo 1:</label>
-                    <input type="text" id="editField1" name="field1">
-                </div>
-                <div class="form-group">
-                    <label for="editField2">Campo 2:</label>
-                    <input type="text" id="editField2" name="field2">
-                </div>
-                <div class="form-group">
-                    <label for="editField3">Campo 3:</label>
-                    <input type="text" id="editField3" name="field3">
-                </div>
-                <input type="hidden" id="editRecordId">
-                <button type="submit">Guardar Cambios</button>
-            </form>
-        </div>
-    </div>
-
-    
     <script>
         //Autenticación
        document.addEventListener('DOMContentLoaded', function() {
@@ -513,41 +434,40 @@ table th, table td {
     }
 
     function renderData(tableId, data, type, pacientesMap) {
-    const tableBody = document.getElementById(tableId);
-    tableBody.innerHTML = data.map(item => {
-        const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
-        return `
-            <tr>
-                ${type === 'cita' ? `
-                    <td class="field1">${item.fields.Hora || ''}</td>
-                    <td class="field2">${item.fields.Fecha || ''}</td>
-                    <td class="field3">${nombreCompleto}</td>
-                    <td>${item.fields.Notas || ''}</td>
-                ` : ''}
-                ${type === 'tratamiento' ? `
-                    <td class="field1">${item.fields.Progreso || ''}</td>
-                    <td class="field2">${item.fields['Fecha de Inicio'] || ''}</td>
-                    <td class="field3">${nombreCompleto}</td>
-                    <td>${item.fields.Resultados || ''}</td>
-                ` : ''}
-                ${type === 'paciente' ? `
-                    <td class="field1">${item.fields.Nombre || ''}</td>
-                    <td class="field2">${item.fields.Apellido || ''}</td>
-                    <td class="field3">${item.fields['Fecha de Nacimiento'] || ''}</td>
-                    <td>${item.fields.Teléfono || ''}</td>
-                    <td>${item.fields.Correo || ''}</td>
-                ` : ''}
-                <td>
-                    <div class="actions">
-                        <button class="update">Actualizar</button>
-                        <button class="delete" data-id="${item.id}">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
+        const tableBody = document.getElementById(tableId);
+        tableBody.innerHTML = data.map(item => {
+            const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
+            return `
+                <tr>
+                    ${type === 'cita' ? `
+                        <td>${item.fields.Hora || ''}</td>
+                        <td>${item.fields.Fecha || ''}</td>
+                        <td>${nombreCompleto}</td>
+                        <td>${item.fields.Notas || ''}</td>
+                    ` : ''}
+                    ${type === 'tratamiento' ? `
+                        <td>${item.fields.Progreso || ''}</td>
+                        <td>${item.fields['Fecha de Inicio'] || ''}</td>
+                        <td>${nombreCompleto}</td>
+                        <td>${item.fields.Resultados || ''}</td>
+                    ` : ''}
+                    ${type === 'paciente' ? `
+                        <td>${item.fields.Nombre || ''}</td>
+                        <td>${item.fields.Apellido || ''}</td>
+                        <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
+                        <td>${item.fields.Teléfono || ''}</td>
+                        <td>${item.fields.Correo || ''}</td>
+                    ` : ''}
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${item.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
         
          document.querySelector('.menu-toggle').addEventListener('click', function() {
         document.querySelector('.sidebar').classList.toggle('show');
@@ -559,79 +479,6 @@ table th, table td {
         });
         document.getElementById(sectionId).classList.add('active');
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('editModal');
-    const closeBtn = document.querySelector('.modal .close');
-    const editForm = document.getElementById('editForm');
-    
-    document.querySelectorAll('.actions .update').forEach(button => {
-        button.addEventListener('click', function() {
-            const row = this.closest('tr');
-            const recordId = row.querySelector('.delete').getAttribute('data-id');
-            const field1 = row.querySelector('.field1').innerText;
-            const field2 = row.querySelector('.field2').innerText;
-            const field3 = row.querySelector('.field3').innerText;
-
-            document.getElementById('editField1').value = field1;
-            document.getElementById('editField2').value = field2;
-            document.getElementById('editField3').value = field3;
-            document.getElementById('editRecordId').value = recordId;
-
-            modal.style.display = 'block';
-        });
-    });
-
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-
-    editForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const recordId = document.getElementById('editRecordId').value;
-        const field1 = document.getElementById('editField1').value;
-        const field2 = document.getElementById('editField2').value;
-        const field3 = document.getElementById('editField3').value;
-
-        updateRecord(recordId, field1, field2, field3);
-    });
-});
-
-async function updateRecord(recordId, field1, field2, field3) {
-    const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
-    const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
-
-    const updatedData = {
-        fields: {
-            'Campo1': field1,
-            'Campo2': field2,
-            'Campo3': field3
-        }
-    };
-
-    const response = await fetch(`${baseUrl}NombreDeLaTabla/${recordId}`, {
-        method: 'PATCH',
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedData)
-    });
-
-    if (response.ok) {
-        alert('Registro actualizado exitosamente.');
-        window.location.reload(); // Recargar la página para mostrar los cambios
-    } else {
-        console.error('Error al actualizar el registro:', response.statusText);
-        alert('Error al actualizar el registro.');
-    }
-}
 
     </script>
 </body>
