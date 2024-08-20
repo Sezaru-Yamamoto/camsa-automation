@@ -173,40 +173,7 @@ table th, table td {
                     background-color: #c0392b;
                 }
 
-                .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-
-.close-btn {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close-btn:hover,
-.close-btn:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-        
+               
                 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -348,17 +315,6 @@ table th, table td {
         </div>
     </div>
 
-        <!-- Modal -->
-    <div id="updateModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <form id="updateForm">
-                <!-- Los campos específicos se cargarán dinámicamente aquí -->
-            </form>
-            <button onclick="submitUpdate()">Aceptar</button>
-            <button onclick="closeModal()">Cancelar</button>
-        </div>
-    </div>
     
     <script>
         //Autenticación
@@ -499,13 +455,14 @@ table th, table td {
                      : ''}
                     <td>
                         <div class="actions">
-                            <button onclick="openUpdateModal('${item.id}', 'Pacientes')">Actualizar</button>
+                            <button class="update" data-id="${item.id}">Eliminar</button>
                             <button class="delete" data-id="${item.id}">Eliminar</button>
                         </div>
                     </td>
                 </tr>
             ;
         }).join('');
+        console.log('DATOS', {$item.id})
     }
         
          document.querySelector('.menu-toggle').addEventListener('click', function() {
@@ -519,93 +476,6 @@ table th, table td {
         document.getElementById(sectionId).classList.add('active');
     }
 
- async function openModal(recordId, type) {
-    document.getElementById('updateModal').style.display = 'block';
-    
-    const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
-    const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
-    
-    try {
-        // Obtener datos del registro desde Airtable
-        const response = await fetch(${baseUrl}${table}, {
-                headers: { 'Authorization': Bearer ${apiKey} }
-            });
-        if (!response.ok) {
-            throw new Error(`Error fetching record ${recordId}: ${response.statusText}`);
-        }
-        const data = await response.json();
-        const fields = data.fields;
-
-        // Crear el formulario basado en el tipo de registro
-        const form = document.getElementById('updateForm');
-        form.innerHTML = ''; // Limpiar el formulario
-        
-        // Añadir campos al formulario
-        switch (type) {
-            case 'Pacientes':
-                form.innerHTML = `
-                    <label for="nombre">Nombre:</label>
-                    <input type="text" id="nombre" name="nombre" value="${fields.Nombre || ''}" required><br>
-                    <label for="apellido">Apellido:</label>
-                    <input type="text" id="apellido" name="apellido" value="${fields.Apellido || ''}" required><br>
-                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" value="${fields['Fecha de Nacimiento'] || ''}" required><br>
-                    <label for="telefono">Teléfono:</label>
-                    <input type="tel" id="telefono" name="telefono" value="${fields.Teléfono || ''}" required><br>
-                    <label for="correo">Correo:</label>
-                    <input type="email" id="correo" name="correo" value="${fields.Correo || ''}" required><br>
-                `;
-                break;
-            case 'Citas':
-                form.innerHTML = `
-                    <label for="fecha">Fecha:</label>
-                    <input type="date" id="fecha" name="fecha" value="${fields.Fecha || ''}" required><br>
-                    <label for="hora">Hora:</label>
-                    <input type="time" id="hora" name="hora" value="${fields.Hora || ''}" required><br>
-                    <label for="paciente">Paciente:</label>
-                    <input type="text" id="paciente" name="paciente" value="${fields.Paciente || ''}" required><br>
-                    <label for="motivo">Motivo:</label>
-                    <input type="text" id="motivo" name="motivo" value="${fields.Motivo || ''}" required><br>
-                `;
-                break;
-            case 'Tratamientos':
-                form.innerHTML = `
-                    <label for="progreso">Progreso:</label>
-                    <input type="text" id="progreso" name="progreso" value="${fields.Progreso || ''}" required><br>
-                    <label for="fechaInicio">Fecha de Inicio:</label>
-                    <input type="date" id="fechaInicio" name="fechaInicio" value="${fields['Fecha de Inicio'] || ''}" required><br>
-                    <label for="pacienteTratamiento">Paciente:</label>
-                    <input type="text" id="pacienteTratamiento" name="pacienteTratamiento" value="${fields.Paciente || ''}" required><br>
-                    <label for="resultados">Resultados:</label>
-                    <input type="text" id="resultados" name="resultados" value="${fields.Resultados || ''}" required><br>
-                `;
-                break;
-            default:
-                console.error('Tipo de registro no reconocido');
-                return;
-        }
-
-        // Añadir campos ocultos para ID y tipo
-        form.innerHTML += `
-            <input type="hidden" id="recordId" name="recordId" value="${recordId}">
-            <input type="hidden" id="recordType" name="recordType" value="${type}">
-        `;
-    } catch (error) {
-        console.error('Error al abrir el modal:', error);
-    }
-}
-
-
-function closeModal() {
-    document.getElementById('updateModal').style.display = 'none';
-}
-
-
-function submitUpdate() {
-    // Aquí se procesarían y enviarían los datos a Airtable
-    alert('Datos enviados!');
-    closeModal();
-}
 
 
     </script>
