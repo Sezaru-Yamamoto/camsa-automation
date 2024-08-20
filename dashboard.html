@@ -97,7 +97,7 @@
         .main-content {
             flex-grow: 1;
             padding: 20px;
-            padding-left: 300px;
+            padding-left: 250px;
             overflow-y: auto;
             background-color: #ecf0f1;
             transition: margin-left 0.3s ease;
@@ -120,18 +120,16 @@
 
         table {
             width: 100%; /* Hace que la tabla tome el ancho completo del contenedor */
-            min-width: 600px; /* Establece un ancho mínimo para la tabla, ajusta según el contenido */
             border-collapse: collapse;
             background-color: white;
             border-radius: 8px;
             margin: 0;
-            display: block;
         }
 
         table th, table td {
             padding: 10px 15px;
             text-align: left;
-            white-space: nowrap; /* Evita el ajuste de texto en las celdas */
+            border-bottom: 1px solid #ddd;
         }
 
         table th {
@@ -145,34 +143,6 @@
 
         table tbody tr:hover {
             background-color: #e9f5ff;
-        }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .actions button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .actions button:hover {
-            background-color: #2980b9;
-        }
-
-        .actions .delete {
-            background-color: #e74c3c;
-        }
-
-        .actions .delete:hover {
-            background-color: #c0392b;
         }
 
         @media (max-width: 768px) {
@@ -209,17 +179,7 @@
                 margin-left: 0;
                 padding-left: 10px;
             }
-
-            .table-container {
-                overflow-x: auto; /* Permite desplazamiento horizontal */
-                -webkit-overflow-scrolling: touch; /* Mejora el desplazamiento en dispositivos iOS */
-            }
-
-            table {
-                min-width: 600px; /* Ajusta el ancho mínimo para dispositivos móviles si es necesario */
-            }
         }
-        
     </style>
 </head>
 <body>
