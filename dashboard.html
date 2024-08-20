@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Clínica</title>
-    <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon">
+       <link rel="icon" href="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" type="image/x-icon"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
@@ -219,10 +219,11 @@
                 min-width: 600px; /* Ajusta el ancho mínimo para dispositivos móviles si es necesario */
             }
         }
+        
     </style>
 </head>
 <body>
-    <button class="menu-toggle">&#9776;</button>
+      <button class="menu-toggle">&#9776;</button>
     <div class="sidebar">
         <img src="https://sezaru-yamamoto.github.io/camsa-automation/assets/maily2.png" alt="Logo de la Clínica">
         <h2>Dashboard</h2>
@@ -236,120 +237,245 @@
     </div>
 
     <div class="main-content">
+        
         <!-- Sección para Overview -->
         <div id="overview" class="section">
             <h2>Overview</h2>
-            <div class="table-container">
-                <table class="table" id="overviewTable">
-                    <thead>
-                        <tr>
-                            <th>Nombre completo</th>
-                            <th>Fecha de nacimiento</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
-                            <th>Fecha de la cita</th>
-                            <th>Hora de la cita</th>
-                        </tr>
-                    </thead>
-                    <tbody id="overviewData">
-                        <!-- Aquí se llenarán los datos -->
-                    </tbody>
-                </table>
-            </div>
+            <table class="table" id="overviewTable">
+                <thead>
+                    <tr>
+                        <th>Nombre completo</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Fecha de la cita</th>
+                        <th>Hora de la cita</th>
+                    </tr>
+                </thead>
+                <tbody id="overviewData">
+                    <!-- Aquí se llenarán los datos -->
+                </tbody>
+            </table>
         </div>
 
         <!-- Sección para Pacientes -->
         <div id="pacientes" class="section">
             <h2>Pacientes</h2>
-            <div class="table-container">
-                <table class="table" id="pacientesTable">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pacientesData">
-                        <!-- Aquí se llenarán los datos -->
-                    </tbody>
-                </table>
-            </div>
+            <table class="table" id="pacientesTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Fecha de Nacimiento</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="pacientesData">
+                    <!-- Aquí se llenarán los datos -->
+                </tbody>
+            </table>
         </div>
 
         <!-- Sección para Citas -->
         <div id="citas" class="section">
             <h2>Citas</h2>
-            <div class="table-container">
-                <table class="table" id="citasTable">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Fecha</th>
-                            <th>Paciente</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="citasData">
-                        <!-- Aquí se llenarán los datos -->
-                    </tbody>
-                </table>
-            </div>
+            <table class="table" id="citasTable">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Motivo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="citasData">
+                    <!-- Aquí se llenarán los datos -->
+                </tbody>
+            </table>
         </div>
 
         <!-- Sección para Tratamientos -->
         <div id="tratamientos" class="section">
             <h2>Tratamientos</h2>
-            <div class="table-container">
-                <table class="table" id="tratamientosTable">
-                    <thead>
-                        <tr>
-                            <th>Paciente</th>
-                            <th>Tratamiento</th>
-                            <th>Fecha de Inicio</th>
-                            <th>Progreso</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tratamientosData">
-                        <!-- Aquí se llenarán los datos -->
-                    </tbody>
-                </table>
-            </div>
+            <table class="table" id="tratamientosTable">
+                <thead>
+                    <tr>
+                        <th>Progreso</th>
+                        <th>Fecha de Inicio</th>
+                        <th>Paciente</th>
+                        <th>Resultados</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tratamientosData">
+                    <!-- Aquí se llenarán los datos -->
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const sections = document.querySelectorAll('.section');
-            const sidebarItems = document.querySelectorAll('.sidebar ul li');
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
+        //Autenticación
+       document.addEventListener('DOMContentLoaded', function() {
+        if (sessionStorage.getItem('authenticated') !== 'true') {
+            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+        } else {
+            fetchData();
+            showSection('overview');
+        }
+    });
+        
+        //Cierre de sesión
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            sessionStorage.removeItem('authenticated');
+            window.location.href = 'https://sezaru-yamamoto.github.io/camsa-automation/login.html';
+        });
 
-            sidebarItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const sectionId = item.getAttribute('data-section');
-
-                    sections.forEach(section => {
-                        section.classList.remove('active');
-                    });
-
-                    sidebarItems.forEach(item => {
+      // Manejo de la navegación del menú
+            document.querySelectorAll('.sidebar ul li').forEach(function(menuItem) {
+                menuItem.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                    document.querySelectorAll('.sidebar ul li').forEach(function(item) {
                         item.classList.remove('active');
                     });
-
-                    document.getElementById(sectionId).classList.add('active');
-                    item.classList.add('active');
+                    this.classList.add('active');
                 });
             });
+    
+     //Manejo de datos de airtable
+    async function fetchData() {
+        const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
+        const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
 
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('show');
+        const fetchTableData = async (table) => {
+            const response = await fetch(`${baseUrl}${table}`, {
+                headers: { 'Authorization': `Bearer ${apiKey}` }
             });
+            if (!response.ok) {
+                console.error(`Error fetching ${table}: ${response.statusText}`);
+                return [];
+            }
+            const data = await response.json();
+            return data.records;
+        };
+
+        try {
+            const [pacientes, citas, tratamientos] = await Promise.all([
+                fetchTableData('Pacientes'),
+                fetchTableData('Citas'),
+                fetchTableData('Tratamientos'),
+            ]);
+
+            // Log data for debugging
+            console.log('Pacientes:', pacientes);
+            console.log('Citas:', citas);
+            console.log('Tratamientos:', tratamientos);
+
+            // Crear un mapeo de IDs de pacientes a nombres completos
+            const pacientesMap = {};
+            pacientes.forEach(paciente => {
+                const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+                pacientesMap[paciente.id] = nombreCompleto;
+            });
+
+            // Crear un mapeo de IDs de citas a datos
+            const citasMap = {};
+            citas.forEach(cita => {
+                const pacienteNombre = pacientesMap[cita.fields.Paciente] || 'Nombre no disponible';
+                citasMap[cita.id] = {
+                    fecha: cita.fields.Fecha || '',
+                    hora: cita.fields.Hora || '',
+                    paciente: pacienteNombre,
+                };
+            });
+
+            // Renderizar la tabla de Overview
+            renderOverview(pacientes, citasMap, tratamientos);
+
+            // Renderizar las demás secciones
+            renderData('pacientesData', pacientes, 'paciente');
+            renderData('citasData', citas, 'cita', pacientesMap);
+            renderData('tratamientosData', tratamientos, 'tratamiento', pacientesMap);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    function renderOverview(pacientes, citasMap, tratamientos) {
+        const tableBody = document.getElementById('overviewData');
+        tableBody.innerHTML = pacientes.map(paciente => {
+            const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+            const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
+            const correo = paciente.fields.Correo || '';
+            const telefono = paciente.fields.Teléfono || '';
+            
+            // Buscar citas y progresos asociados al paciente
+            const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
+
+            return `
+                <tr>
+                    <td>${nombreCompleto}</td>
+                    <td>${fechaNacimiento}</td>
+                    <td>${correo}</td>
+                    <td>${telefono}</td>
+                    <td>${citasData.fecha || ''}</td>
+                    <td>${citasData.hora || ''}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderData(tableId, data, type, pacientesMap) {
+        const tableBody = document.getElementById(tableId);
+        tableBody.innerHTML = data.map(item => {
+            const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
+            return `
+                <tr>
+                    ${type === 'cita' ? `
+                        <td>${item.fields.Hora || ''}</td>
+                        <td>${item.fields.Fecha || ''}</td>
+                        <td>${nombreCompleto}</td>
+                        <td>${item.fields.Notas || ''}</td>
+                    ` : ''}
+                    ${type === 'tratamiento' ? `
+                        <td>${item.fields.Progreso || ''}</td>
+                        <td>${item.fields['Fecha de Inicio'] || ''}</td>
+                        <td>${nombreCompleto}</td>
+                        <td>${item.fields.Resultados || ''}</td>
+                    ` : ''}
+                    ${type === 'paciente' ? `
+                        <td>${item.fields.Nombre || ''}</td>
+                        <td>${item.fields.Apellido || ''}</td>
+                        <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
+                        <td>${item.fields.Teléfono || ''}</td>
+                        <td>${item.fields.Correo || ''}</td>
+                    ` : ''}
+                    <td>
+                        <div class="actions">
+                            <button class="update">Actualizar</button>
+                            <button class="delete" data-id="${item.id}">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+        
+         document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('show');
+    });
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(function(section) {
+            section.classList.remove('active');
         });
+        document.getElementById(sectionId).classList.add('active');
+    }
+
     </script>
 </body>
 </html>
