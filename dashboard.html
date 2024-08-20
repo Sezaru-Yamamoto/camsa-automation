@@ -311,6 +311,13 @@
             showSection('overview');
         }
     });
+
+            const addPacienteBtn = document.getElementById('addPacienteBtn');
+            const addPacienteModal = document.getElementById('addPacienteModal');
+            const closeModal = document.querySelector('.modal .close');
+            const addPacienteForm = document.getElementById('addPacienteForm');
+
+        
         
         //Cierre de sesión
         document.getElementById('logoutButton').addEventListener('click', function() {
@@ -461,6 +468,28 @@
         });
         document.getElementById(sectionId).classList.add('active');
     }
+
+    addPacienteBtn.addEventListener('click', function () {
+                addPacienteModal.style.display = 'flex';
+            });
+
+            closeModal.addEventListener('click', function () {
+                addPacienteModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function (event) {
+                if (event.target == addPacienteModal) {
+                    addPacienteModal.style.display = 'none';
+                }
+            });
+
+            addPacienteForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                // Aquí puedes agregar la lógica para enviar los datos del formulario
+                alert('Paciente agregado');
+                addPacienteModal.style.display = 'none';
+            });
+        });
 
     </script>
 </body>
