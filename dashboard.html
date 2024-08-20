@@ -566,11 +566,11 @@ function loadRecordData(pacientesMap, tableId) {
     // Aquí debes cargar datos reales del registro desde Airtable
     // Esto es solo un ejemplo con datos ficticios:
     let pacienteData = {
-        'nombre': ${item.fields['Nombre'] || ''},
-        'apellido': ${item.fields['Apellido'] || ''},
-        'fecha_de_nacimiento': ${item.fields['Fecha de Nacimiento'] || ''},
-        'teléfono': ${item.fields['Teléfono'] || ''},
-        'correo': ${item.fields['Correo'] || ''}'
+        'nombre': '${item.fields['Nombre'] || ''}',
+        'apellido': '${item.fields['Apellido'] || ''}',
+        'fecha_de_nacimiento': '${item.fields['Fecha de Nacimiento'] || ''}',
+        'teléfono': '${item.fields['Teléfono'] || ''}',
+        'correo': '${item.fields['Correo'] || ''}'
     };
 
     for (let key in pacienteData) {
