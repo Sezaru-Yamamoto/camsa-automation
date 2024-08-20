@@ -551,7 +551,7 @@ table th, table td {
         form.appendChild(document.createElement('br'));
     });
 
-    // Cargar datos del registro actual (dummy data por ahora)
+    // Cargar datos del registro actual +
     loadRecordData(recordId, tableName);
 
     // Mostrar el modal
@@ -562,20 +562,20 @@ function closeModal() {
     document.getElementById('updateModal').style.display = 'none';
 }
 
-function loadRecordData(recordId, tableName) {
+function loadRecordData(pacientesMap, tableId) {
     // Aquí debes cargar datos reales del registro desde Airtable
     // Esto es solo un ejemplo con datos ficticios:
-    let dummyData = {
-        'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fecha_de_nacimiento': '1990-01-01',
-        'teléfono': '555-1234',
-        'correo': 'juan@example.com'
+    let pacienteData = {
+        'nombre': ${item.fields['Nombre'] || ''},
+        'apellido': ${item.fields['Apellido'] || ''},
+        'fecha_de_nacimiento': ${item.fields['Fecha de Nacimiento'] || ''},
+        'teléfono': ${item.fields['Teléfono'] || ''},
+        'correo': ${item.fields['Correo'] || ''}'
     };
 
-    for (let key in dummyData) {
+    for (let key in pacienteData) {
         if (document.getElementById(key)) {
-            document.getElementById(key).value = dummyData[key];
+            document.getElementById(key).value = pacienteData[key];
         }
     }
 }
