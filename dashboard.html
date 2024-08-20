@@ -174,6 +174,7 @@ table th, table td {
                 }
 
                 .modal {
+    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -185,7 +186,7 @@ table th, table td {
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: white;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -519,12 +520,12 @@ table th, table td {
         document.getElementById(sectionId).classList.add('active');
     }
 
-        // Abrir el modal y cargar los campos según la tabla
-function openUpdateModal(recordId, tableName) {
-    // Identificar la tabla actual y cargar los campos correspondientes
+        function openUpdateModal(recordId, tableName) {
+    // Limpiar el formulario
     let form = document.getElementById('updateForm');
-    form.innerHTML = '';  // Limpiar el contenido anterior del formulario
-    
+    form.innerHTML = '';  // Limpiar contenido anterior
+
+    // Definir campos según la tabla
     let fields = [];
     switch (tableName) {
         case 'Pacientes':
@@ -538,7 +539,7 @@ function openUpdateModal(recordId, tableName) {
             break;
     }
     
-    // Generar campos del formulario dinámicamente
+    // Crear los campos dinámicamente
     fields.forEach(field => {
         let label = document.createElement('label');
         label.innerText = field;
@@ -548,49 +549,44 @@ function openUpdateModal(recordId, tableName) {
         input.id = field.toLowerCase().replace(/ /g, '_');
         form.appendChild(label);
         form.appendChild(input);
+        form.appendChild(document.createElement('br'));
     });
-    
-    // Aquí puedes cargar los valores del registro actual en los campos
+
+    // Cargar datos del registro actual (dummy data por ahora)
     loadRecordData(recordId, tableName);
-    
+
     // Mostrar el modal
     document.getElementById('updateModal').style.display = 'block';
 }
 
-// Cerrar el modal
 function closeModal() {
     document.getElementById('updateModal').style.display = 'none';
 }
 
-// Cargar los datos del registro en el formulario
 function loadRecordData(recordId, tableName) {
-    // Aquí debes hacer una llamada a Airtable usando Make para obtener los datos del registro actual
-    // Suponiendo que ya tienes los datos, asignarlos a los campos del formulario
+    // Aquí debes cargar datos reales del registro desde Airtable
+    // Esto es solo un ejemplo con datos ficticios:
+    let dummyData = {
+        'nombre': 'Juan',
+        'apellido': 'Pérez',
+        'fecha_de_nacimiento': '1990-01-01',
+        'teléfono': '555-1234',
+        'correo': 'juan@example.com'
+    };
 
-    // Ejemplo (esto depende de la estructura de tu tabla en Airtable):
-    const recordData = {};  // Esto debe ser el resultado de la llamada a Airtable
-    for (let key in recordData) {
+    for (let key in dummyData) {
         if (document.getElementById(key)) {
-            document.getElementById(key).value = recordData[key];
+            document.getElementById(key).value = dummyData[key];
         }
     }
 }
 
-// Enviar los datos actualizados a Airtable
 function submitUpdate() {
-    // Obtener los valores del formulario
-    const formData = new FormData(document.getElementById('updateForm'));
-    const dataToSend = {};
-    formData.forEach((value, key) => {
-        dataToSend[key] = value;
-    });
-    
-    // Aquí debes hacer una llamada a Make para actualizar el registro en Airtable
-    // Recuerda pasar el recordId y tableName para actualizar la tabla correcta
-
-    // Cerrar el modal después de enviar los datos
+    // Aquí se procesarían y enviarían los datos a Airtable
+    alert('Datos enviados!');
     closeModal();
 }
+
 
     </script>
 </body>
