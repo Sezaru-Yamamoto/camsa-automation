@@ -527,9 +527,9 @@ table th, table td {
     
     try {
         // Obtener datos del registro desde Airtable
-        const response = await fetch(`${baseUrl}${type}/${recordId}`, {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
-        });
+        const response = await fetch(${baseUrl}${table}, {
+                headers: { 'Authorization': Bearer ${apiKey} }
+            });
         if (!response.ok) {
             throw new Error(`Error fetching record ${recordId}: ${response.statusText}`);
         }
