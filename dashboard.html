@@ -172,8 +172,7 @@ table th, table td {
                 .actions .delete:hover {
                     background-color: #c0392b;
                 }
-
-               
+        
                 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -315,7 +314,6 @@ table th, table td {
         </div>
     </div>
 
-    
     <script>
         //Autenticación
        document.addEventListener('DOMContentLoaded', function() {
@@ -455,14 +453,13 @@ table th, table td {
                      : ''}
                     <td>
                         <div class="actions">
-                            <button class="update" data-id="${item.id}">Eliminar</button>
+                            <button class="update">Actualizar</button>
                             <button class="delete" data-id="${item.id}">Eliminar</button>
                         </div>
                     </td>
                 </tr>
             ;
         }).join('');
-        console.log('DATOS', {$item.id})
     }
         
          document.querySelector('.menu-toggle').addEventListener('click', function() {
@@ -475,8 +472,6 @@ table th, table td {
         });
         document.getElementById(sectionId).classList.add('active');
     }
-
-
 
     </script>
 </body>
