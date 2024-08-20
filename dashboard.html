@@ -519,66 +519,87 @@ table th, table td {
         document.getElementById(sectionId).classList.add('active');
     }
 
-        function openUpdateModal(recordId, tableName) {
-    // Limpiar el formulario
-    let form = document.getElementById('updateForm');
-    form.innerHTML = '';  // Limpiar contenido anterior
-
-    // Definir campos según la tabla
-    let fields = [];
-    switch (tableName) {
-        case 'Pacientes':
-            fields = ['Nombre', 'Apellido', 'Fecha de Nacimiento', 'Teléfono', 'Correo'];
-            break;
-        case 'Citas':
-            fields = ['Hora', 'Fecha', 'Paciente', 'Motivo'];
-            break;
-        case 'Tratamientos':
-            fields = ['Progreso', 'Fecha de Inicio', 'Paciente', 'Resultados'];
-            break;
-    }
-    
-    // Crear los campos dinámicamente
-    fields.forEach(field => {
-        let label = document.createElement('label');
-        label.innerText = field;
-        let input = document.createElement('input');
-        input.type = 'text';
-        input.name = field.toLowerCase().replace(/ /g, '_');
-        input.id = field.toLowerCase().replace(/ /g, '_');
-        form.appendChild(label);
-        form.appendChild(input);
-        form.appendChild(document.createElement('br'));
-    });
-
-    // Cargar datos del registro actual (dummy data por ahora)
-    loadRecordData(recordId, tableName);
-
-    // Mostrar el modal
+ async function openModal(recordId, type) {
     document.getElementById('updateModal').style.display = 'block';
+    
+    const baseUrl = 'https://api.airtable.com/v0/app0HWHKlb3P6MChm/';
+    const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
+    
+    try {
+        // Obtener datos del registro desde Airtable
+        const response = await fetch(`${baseUrl}${type}/${recordId}`, {
+            headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+        if (!response.ok) {
+            throw new Error(`Error fetching record ${recordId}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        const fields = data.fields;
+
+        // Crear el formulario basado en el tipo de registro
+        const form = document.getElementById('updateForm');
+        form.innerHTML = ''; // Limpiar el formulario
+        
+        // Añadir campos al formulario
+        switch (type) {
+            case 'Pacientes':
+                form.innerHTML = `
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" value="${fields.Nombre || ''}" required><br>
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" value="${fields.Apellido || ''}" required><br>
+                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" value="${fields['Fecha de Nacimiento'] || ''}" required><br>
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" value="${fields.Teléfono || ''}" required><br>
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" value="${fields.Correo || ''}" required><br>
+                `;
+                break;
+            case 'Citas':
+                form.innerHTML = `
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" id="fecha" name="fecha" value="${fields.Fecha || ''}" required><br>
+                    <label for="hora">Hora:</label>
+                    <input type="time" id="hora" name="hora" value="${fields.Hora || ''}" required><br>
+                    <label for="paciente">Paciente:</label>
+                    <input type="text" id="paciente" name="paciente" value="${fields.Paciente || ''}" required><br>
+                    <label for="motivo">Motivo:</label>
+                    <input type="text" id="motivo" name="motivo" value="${fields.Motivo || ''}" required><br>
+                `;
+                break;
+            case 'Tratamientos':
+                form.innerHTML = `
+                    <label for="progreso">Progreso:</label>
+                    <input type="text" id="progreso" name="progreso" value="${fields.Progreso || ''}" required><br>
+                    <label for="fechaInicio">Fecha de Inicio:</label>
+                    <input type="date" id="fechaInicio" name="fechaInicio" value="${fields['Fecha de Inicio'] || ''}" required><br>
+                    <label for="pacienteTratamiento">Paciente:</label>
+                    <input type="text" id="pacienteTratamiento" name="pacienteTratamiento" value="${fields.Paciente || ''}" required><br>
+                    <label for="resultados">Resultados:</label>
+                    <input type="text" id="resultados" name="resultados" value="${fields.Resultados || ''}" required><br>
+                `;
+                break;
+            default:
+                console.error('Tipo de registro no reconocido');
+                return;
+        }
+
+        // Añadir campos ocultos para ID y tipo
+        form.innerHTML += `
+            <input type="hidden" id="recordId" name="recordId" value="${recordId}">
+            <input type="hidden" id="recordType" name="recordType" value="${type}">
+        `;
+    } catch (error) {
+        console.error('Error al abrir el modal:', error);
+    }
 }
+
 
 function closeModal() {
     document.getElementById('updateModal').style.display = 'none';
 }
 
-function loadRecordData(recordId, tableName) {
-    // Aquí debes cargar datos reales del registro desde Airtable
-    // Esto es solo un ejemplo con datos ficticios:
-    let dummyData = {
-        'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fecha_de_nacimiento': '1990-01-01',
-        'teléfono': '555-1234',
-        'correo': 'juan@example.com'
-    };
-
-    for (let key in dummyData) {
-        if (document.getElementById(key)) {
-            document.getElementById(key).value = dummyData[key];
-        }
-    }
-}
 
 function submitUpdate() {
     // Aquí se procesarían y enviarían los datos a Airtable
