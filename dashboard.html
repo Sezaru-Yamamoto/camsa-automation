@@ -395,11 +395,11 @@ table th, table td {
         const apiKey = 'patOfwFQDiPh6QKCs.84fa051144afd6cc3d3b193de88bd84c733e8219065e55e34f2cb7c5d03b70b7';
 
         const fetchTableData = async (table) => {
-            const response = await fetch(`${baseUrl}${table}`, {
-                headers: { 'Authorization': `Bearer ${apiKey}` }
+            const response = await fetch(${baseUrl}${table}, {
+                headers: { 'Authorization': Bearer ${apiKey} }
             });
             if (!response.ok) {
-                console.error(`Error fetching ${table}: ${response.statusText}`);
+                console.error(Error fetching ${table}: ${response.statusText});
                 return [];
             }
             const data = await response.json();
@@ -421,7 +421,7 @@ table th, table td {
             // Crear un mapeo de IDs de pacientes a nombres completos
             const pacientesMap = {};
             pacientes.forEach(paciente => {
-                const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+                const nombreCompleto = ${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''};
                 pacientesMap[paciente.id] = nombreCompleto;
             });
 
@@ -451,7 +451,7 @@ table th, table td {
     function renderOverview(pacientes, citasMap, tratamientos) {
         const tableBody = document.getElementById('overviewData');
         tableBody.innerHTML = pacientes.map(paciente => {
-            const nombreCompleto = `${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''}`;
+            const nombreCompleto = ${paciente.fields.Nombre || ''} ${paciente.fields.Apellido || ''};
             const fechaNacimiento = paciente.fields['Fecha de Nacimiento'] || '';
             const correo = paciente.fields.Correo || '';
             const telefono = paciente.fields.Teléfono || '';
@@ -459,7 +459,7 @@ table th, table td {
             // Buscar citas y progresos asociados al paciente
             const citasData = Object.values(citasMap).find(cita => cita.paciente === nombreCompleto) || {};
 
-            return `
+            return 
                 <tr>
                     <td>${nombreCompleto}</td>
                     <td>${fechaNacimiento}</td>
@@ -468,7 +468,7 @@ table th, table td {
                     <td>${citasData.fecha || ''}</td>
                     <td>${citasData.hora || ''}</td>
                 </tr>
-            `;
+            ;
         }).join('');
     }
 
@@ -476,27 +476,27 @@ table th, table td {
         const tableBody = document.getElementById(tableId);
         tableBody.innerHTML = data.map(item => {
             const nombreCompleto = pacientesMap ? pacientesMap[item.fields.Paciente] || 'Nombre no disponible' : '';
-            return `
+            return 
                 <tr>
-                    ${type === 'cita' ? `
+                    ${type === 'cita' ? 
                         <td>${item.fields.Hora || ''}</td>
                         <td>${item.fields.Fecha || ''}</td>
                         <td>${nombreCompleto}</td>
                         <td>${item.fields.Notas || ''}</td>
-                    ` : ''}
-                    ${type === 'tratamiento' ? `
+                     : ''}
+                    ${type === 'tratamiento' ? 
                         <td>${item.fields.Progreso || ''}</td>
                         <td>${item.fields['Fecha de Inicio'] || ''}</td>
                         <td>${nombreCompleto}</td>
                         <td>${item.fields.Resultados || ''}</td>
-                    ` : ''}
-                    ${type === 'paciente' ? `
+                     : ''}
+                    ${type === 'paciente' ? 
                         <td>${item.fields.Nombre || ''}</td>
                         <td>${item.fields.Apellido || ''}</td>
                         <td>${item.fields['Fecha de Nacimiento'] || ''}</td>
                         <td>${item.fields.Teléfono || ''}</td>
                         <td>${item.fields.Correo || ''}</td>
-                    ` : ''}
+                     : ''}
                     <td>
                         <div class="actions">
                             <button onclick="openUpdateModal('${item.id}', 'Pacientes')">Actualizar</button>
@@ -504,7 +504,7 @@ table th, table td {
                         </div>
                     </td>
                 </tr>
-            `;
+            ;
         }).join('');
     }
         
@@ -551,7 +551,7 @@ table th, table td {
         form.appendChild(document.createElement('br'));
     });
 
-    // Cargar datos del registro actual +
+    // Cargar datos del registro actual (dummy data por ahora)
     loadRecordData(recordId, tableName);
 
     // Mostrar el modal
@@ -562,20 +562,20 @@ function closeModal() {
     document.getElementById('updateModal').style.display = 'none';
 }
 
-function loadRecordData(pacientesMap, tableId) {
+function loadRecordData(recordId, tableName) {
     // Aquí debes cargar datos reales del registro desde Airtable
     // Esto es solo un ejemplo con datos ficticios:
-    let pacienteData = {
-        'nombre': '${item.fields['Nombre'] || ''}',
-        'apellido': '${item.fields['Apellido'] || ''}',
-        'fecha_de_nacimiento': '${item.fields['Fecha de Nacimiento'] || ''}',
-        'teléfono': '${item.fields['Teléfono'] || ''}',
-        'correo': '${item.fields['Correo'] || ''}'
+    let dummyData = {
+        'nombre': 'Juan',
+        'apellido': 'Pérez',
+        'fecha_de_nacimiento': '1990-01-01',
+        'teléfono': '555-1234',
+        'correo': 'juan@example.com'
     };
 
-    for (let key in pacienteData) {
+    for (let key in dummyData) {
         if (document.getElementById(key)) {
-            document.getElementById(key).value = pacienteData[key];
+            document.getElementById(key).value = dummyData[key];
         }
     }
 }
